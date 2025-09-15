@@ -15,8 +15,5 @@
     "@swc-node/register": "1.11.1",
     "http-terminator": "3.2.0",
     "nestjs-graceful-shutdown": "1.0.3"
-  },
-  "devDependencies": {
-    "concurrently": "9.2.1"
   }
 }
