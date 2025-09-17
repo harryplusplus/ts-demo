@@ -15,12 +15,9 @@ export default defineConfig([
       },
     },
     rules: {
-      "no-import-type": [
+      "@typescript-eslint/consistent-type-imports": [
         "error",
-        {
-          selector: "ImportDeclaration[importKind='type']",
-          message: "Do not use import type. Use regular import instead.",
-        },
+        { prefer: "no-type-imports" },
       ],
     },
   },
