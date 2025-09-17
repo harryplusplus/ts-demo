@@ -1,19 +1,20 @@
 {
   "name": "nest",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
+    "build": "nest build",
     "check-types": "tsc --noEmit",
-    "check-types:watch": "tsc --noEmit --watch",
-    "dev": "concurrently --kill-others-on-fail --names \"start,types\" \"pnpm start:watch\" \"pnpm check-types:watch\"",
-    "start": "SWCRC=true node --import @swc-node/register/esm-register --enable-source-maps src/main.ts",
-    "start:watch": "SWCRC=true node --import @swc-node/register/esm-register --enable-source-maps --watch src/main.ts"
+    "check-types.dev": "tsc -w --noEmit",
+    "dev": "concurrently --kill-others-on-fail --names \"start,types\" \"pnpm start.dev\" \"pnpm check-types.dev\"",
+    "start.dev": "nest start -w",
+    "start.prod": "node dist/main.js"
   },
   "dependencies": {
     "@nestjs/common": "11.1.6",
     "@nestjs/core": "11.1.6",
     "@nestjs/platform-express": "11.1.6",
-    "@swc-node/register": "1.11.1",
     "http-terminator": "3.2.0",
-    "nestjs-graceful-shutdown": "1.0.3"
+    "nestjs-graceful-shutdown": "1.0.3",
+    "source-map-support": "0.5.21"
   }
 }

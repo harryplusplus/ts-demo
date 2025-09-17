@@ -1,6 +1,8 @@
+import "source-map-support/register";
+
 import { NestFactory } from "@nestjs/core";
 import { setupGracefulShutdown } from "nestjs-graceful-shutdown";
-import { AppModule } from "./app.module.js";
+import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -8,4 +10,7 @@ async function bootstrap() {
   await app.listen(3000);
 }
 
-bootstrap().catch(console.error);
+bootstrap().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
