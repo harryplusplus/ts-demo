@@ -7,14 +7,17 @@
     "check-types.dev": "tsc -w --noEmit",
     "dev": "concurrently --kill-others-on-fail --names \"start,types\" \"pnpm start.dev\" \"pnpm check-types.dev\"",
     "start.dev": "nest start -w",
-    "start.prod": "node dist/main.js"
+    "start.prod": "node dist/main.js",
+    "gen-db-types": "kysely-codegen"
   },
   "dependencies": {
     "@nestjs/common": "11.1.6",
     "@nestjs/core": "11.1.6",
     "@nestjs/platform-express": "11.1.6",
     "http-terminator": "3.2.0",
+    "kysely": "0.28.7",
     "nestjs-graceful-shutdown": "1.0.3",
+    "pg": "8.16.3",
     "source-map-support": "0.5.21"
   }
 }
