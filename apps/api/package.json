@@ -1,5 +1,5 @@
 {
-  "name": "nest",
+  "name": "api",
   "type": "commonjs",
   "scripts": {
     "build": "nest build",
