@@ -3,7 +3,8 @@
   "type": "module",
   "scripts": {
     "build": "turbo build",
-    "check-types": "turbo check-types"
+    "check-types": "turbo check-types",
+    "lint": "eslint"
   },
   "devDependencies": {
     "@eslint/js": "9.35.0",
