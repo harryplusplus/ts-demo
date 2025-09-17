@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
-import { KyselyDb } from "./kysely-db";
+import { Kysely } from "./kysely";
 import { PgPool } from "./pg-pool";
 
 @Module({
-  providers: [PgPool, KyselyDb],
-  exports: [PgPool, KyselyDb],
+  providers: [PgPool, Kysely],
+  exports: [PgPool, Kysely],
 })
 export class DbModule {}
