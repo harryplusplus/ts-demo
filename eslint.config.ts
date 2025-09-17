@@ -5,6 +5,7 @@ import ts from "typescript-eslint";
 export default defineConfig([
   {
     files: ["apps/*/src/**/*.ts", "libs/*/src/**/*.ts"],
+    ignores: ["**/*.d.ts"],
     plugins: { js, ts },
     extends: ["js/recommended", "ts/recommendedTypeChecked"],
     languageOptions: {
