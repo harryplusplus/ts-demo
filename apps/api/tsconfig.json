@@ -1,8 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "verbatimModuleSyntax": false
+    "paths": {
+      "@/*": ["./src/*", "./types/*"]
+    },
+    "baseUrl": "."
   },
-  "include": ["src"],
+  "include": ["src", "types"],
   "exclude": ["src/**/*test.ts"]
 }

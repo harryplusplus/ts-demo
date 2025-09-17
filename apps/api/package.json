@@ -8,7 +8,9 @@
     "dev": "concurrently --kill-others-on-fail --names \"start,types\" \"pnpm start.dev\" \"pnpm check-types.dev\"",
     "start.dev": "nest start -w",
     "start.prod": "node dist/main.js",
-    "gen-db-types": "kysely-codegen"
+    "gen-types.db": "kysely-codegen",
+    "gen-types.env": "node ../../scripts/gen-types-env.ts",
+    "lint": "eslint"
   },
   "dependencies": {
     "@nestjs/common": "11.1.6",

@@ -1,5 +1,0 @@
-{
-  "camelCase": true,
-  "dialect": "postgres",
-  "outFile": "src/generated/db.d.ts"
-}
