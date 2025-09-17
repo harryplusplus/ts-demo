@@ -14,5 +14,14 @@ export default defineConfig([
         tsconfigRootDir: import.meta.dirname,
       },
     },
+    rules: {
+      "no-import-type": [
+        "error",
+        {
+          selector: "ImportDeclaration[importKind='type']",
+          message: "Do not use import type. Use regular import instead.",
+        },
+      ],
+    },
   },
 ]);

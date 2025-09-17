@@ -1,4 +1,4 @@
-import type { DB } from "@/db";
+import { DB } from "@/db";
 import { Injectable } from "@nestjs/common";
 import { Kysely, PostgresDialect } from "kysely";
 import { PgPool } from "./pg-pool";

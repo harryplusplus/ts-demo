@@ -9,8 +9,7 @@
     "start.dev": "nest start -w",
     "start.prod": "node dist/main.js",
     "gen-types.db": "kysely-codegen",
-    "gen-types.env": "node ../../scripts/gen-types-env.ts",
-    "lint": "eslint"
+    "gen-types.env": "node ../../scripts/gen-types-env.ts"
   },
   "dependencies": {
     "@nestjs/common": "11.1.6",
