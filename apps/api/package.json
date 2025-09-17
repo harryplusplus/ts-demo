@@ -9,12 +9,14 @@
     "start.dev": "nest start -w",
     "start.prod": "node dist/main.js",
     "gen-types.db": "kysely-codegen",
-    "gen-types.env": "node ../../scripts/gen-types-env.ts"
+    "gen-types.env": "node scripts/gen-types-env.mts",
+    "db.migrate": "node scripts/flyway.mts migrate"
   },
   "dependencies": {
     "@nestjs/common": "11.1.6",
     "@nestjs/core": "11.1.6",
     "@nestjs/platform-express": "11.1.6",
+    "dotenv": "17.2.2",
     "http-terminator": "3.2.0",
     "kysely": "0.28.7",
     "nestjs-graceful-shutdown": "1.0.3",
