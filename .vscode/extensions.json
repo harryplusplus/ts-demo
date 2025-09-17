@@ -2,6 +2,7 @@
   "recommendations": [
     "esbenp.prettier-vscode",
     "redhat.vscode-yaml",
+    "renesaarsoo.sql-formatter-vsc",
     "usernamehw.errorlens"
   ]
 }
