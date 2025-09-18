@@ -9,7 +9,11 @@ export const PG_POOL = "pgPool";
       provide: PG_POOL,
       useFactory: () =>
         new Pool({
-          connectionString: process.env.DATABASE_URL,
+          connectionString:
+            process.env.DATABASE_URL ??
+            (() => {
+              throw new Error("Invalid DATABASE_URL.");
+            })(),
         }),
     },
   ],

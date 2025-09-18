@@ -1,11 +1,11 @@
 import "dotenv/config";
 import "source-map-support/register";
 
+import { AppModule } from "@/app/app.module";
 import { NestFactory } from "@nestjs/core";
 import { ExpressAdapter } from "@nestjs/platform-express";
 import express from "express";
 import { setupGracefulShutdown } from "nestjs-graceful-shutdown";
-import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const expressInstance = express();

@@ -13,6 +13,7 @@ export class AuthController {
   }
 
   @Post("/signin")
+  // TODO: AuthGuard
   async signin(@Body(new ZodPipe(SigninBody)) body: SigninBody) {
     return await this.authService.signin(body);
   }

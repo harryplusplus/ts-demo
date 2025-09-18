@@ -1,19 +1,31 @@
 import { DB } from "@/db";
+import { PG_POOL, PgModule } from "@/pg/pg.module";
+import { RefreshTokensModule } from "@/refresh-tokens/refresh-tokens.module";
+import { UsersModule } from "@/users/users.module";
 import { ClsPluginTransactional } from "@nestjs-cls/transactional";
 import { TransactionalAdapterKysely } from "@nestjs-cls/transactional-adapter-kysely";
 import { Module } from "@nestjs/common";
+import { JwtModule } from "@nestjs/jwt";
 import { CamelCasePlugin, PostgresDialect } from "kysely";
-import { ClsModule, ClsPlugin } from "nestjs-cls";
+import { ClsModule } from "nestjs-cls";
 import { GracefulShutdownModule } from "nestjs-graceful-shutdown";
 import { KYSELY_MODULE_CONNECTION_TOKEN, KyselyModule } from "nestjs-kysely";
 import { Pool } from "pg";
-import { PG_POOL, PgModule } from "./pg.module";
-import { RefreshTokensModule } from "./refresh-tokens/refresh-tokens.module";
-import { UsersModule } from "./users/users.module";
 
 @Module({
   imports: [
     GracefulShutdownModule.forRoot(),
+    JwtModule.register({
+      global: true,
+      secret:
+        process.env.JWT_SECRET ??
+        (() => {
+          throw new Error("Invalid JWT_SECRET.");
+        })(),
+      signOptions: {
+        issuer: "api",
+      },
+    }),
     PgModule,
     KyselyModule.forRootAsync({
       imports: [PgModule],
@@ -29,13 +41,12 @@ import { UsersModule } from "./users/users.module";
       global: true,
       middleware: { mount: true },
       plugins: [
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         new ClsPluginTransactional({
           imports: [KyselyModule],
           adapter: new TransactionalAdapterKysely<DB>({
             kyselyInstanceToken: KYSELY_MODULE_CONNECTION_TOKEN(),
           }),
-        }) as ClsPlugin,
+        }),
       ],
     }),
     UsersModule,
