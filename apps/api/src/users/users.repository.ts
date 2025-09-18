@@ -1,18 +1,11 @@
 import { isUniqueViolation } from "@/pg/pg.utils";
 import { KyselyTransactionalAdapter } from "@/transactional/transactional.types";
-import { hash } from "@/utils/hash";
 import { InjectTransaction, Transaction } from "@nestjs-cls/transactional";
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import {
-  UnsafeCreateUserInput,
-  UnsafeGetUserByEmailInput,
-  UnsafeGetUserInput,
-} from "./users.types";
 
 @Injectable()
 export class UsersRepository {
@@ -21,15 +14,14 @@ export class UsersRepository {
     private readonly tx: Transaction<KyselyTransactionalAdapter>
   ) {}
 
-  async unsafeCreateUser(input: UnsafeCreateUserInput) {
-    const { email, password } = input;
+  async createUser(input: { email: string; passwordHashed: string }) {
+    const { email, passwordHashed } = input;
     const uuid = crypto.randomUUID();
-    const passwordHashed = await hash(password);
     try {
       return await this.tx
         .insertInto("users")
         .values({ email, passwordHashed, uuid })
-        .returning(["uuid", "id"])
+        .returning("uuid")
         .executeTakeFirstOrThrow();
     } catch (e) {
       if (isUniqueViolation("users", "email", e)) {
@@ -42,30 +34,19 @@ export class UsersRepository {
     }
   }
 
-  async unsafeGetUser(input: UnsafeGetUserInput) {
-    const unsafeUser = await this.unsafeGetUserByEmail(input);
-    const { password } = input;
-    const actualPasswordHashed = await hash(password);
-    if (actualPasswordHashed !== unsafeUser.passwordHashed) {
-      throw new BadRequestException("Invalid password.");
-    }
-
-    return unsafeUser;
-  }
-
-  async unsafeGetUserByEmail(input: UnsafeGetUserByEmailInput) {
+  async findUserWithSensitiveDataByEmail(input: { email: string }) {
     const { email } = input;
-    const unsafeUser = await this.tx
+    const userWithSensitiveData = await this.tx
       .selectFrom("users")
-      .select(["uuid", "passwordHashed"])
+      .select(["id", "uuid", "passwordHashed"])
       .where("email", "=", email)
-      .where("deletedAt", "is not", null)
+      .where("deletedAt", "is", null)
       .executeTakeFirst();
 
-    if (!unsafeUser) {
-      throw new NotFoundException("Uer not found.");
+    if (!userWithSensitiveData) {
+      throw new NotFoundException("User not found.");
     }
 
-    return unsafeUser;
+    return userWithSensitiveData;
   }
 }

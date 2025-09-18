@@ -1,3 +1,4 @@
+import { AuthModule } from "@/auth/auth.module";
 import { DB } from "@/db";
 import { PG_POOL, PgModule } from "@/pg/pg.module";
 import { RefreshTokensModule } from "@/refresh-tokens/refresh-tokens.module";
@@ -46,11 +47,13 @@ import { Pool } from "pg";
           adapter: new TransactionalAdapterKysely<DB>({
             kyselyInstanceToken: KYSELY_MODULE_CONNECTION_TOKEN(),
           }),
+          enableTransactionProxy: true,
         }),
       ],
     }),
     UsersModule,
     RefreshTokensModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

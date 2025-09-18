@@ -30,4 +30,13 @@ export class RefreshTokensRepository {
       throw e;
     }
   }
+
+  async findAllRefreshTokensByUserId(input: { userId: string }) {
+    const { userId } = input;
+    return await this.tx
+      .selectFrom("refreshTokens")
+      .select("token")
+      .where("userId", "=", userId)
+      .execute();
+  }
 }

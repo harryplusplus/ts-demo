@@ -10,7 +10,8 @@
     "start.prod": "node dist/main.js",
     "gen-types.db": "kysely-codegen",
     "gen-types.env": "node scripts/gen-types-env.mts",
-    "migrate-db": "node scripts/flyway.mts migrate"
+    "migrate-db": "node scripts/flyway.mts migrate",
+    "migrate-db.dev": "pnpm migrate-db && pnpm gen-types.db"
   },
   "dependencies": {
     "@nestjs-cls/transactional": "3.1.0",

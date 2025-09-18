@@ -22,6 +22,9 @@ CREATE TABLE refresh_tokens (
 ALTER TABLE refresh_tokens
 ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id);
 
+-- Why: 최초 로그인시 생성을 위해 user_id로 조회함.
+CREATE INDEX idx_refresh_tokens_user_id ON refresh_tokens (user_id);
+
 -- Why: 리프레시 토큰 갱신
 CREATE INDEX idx_refresh_tokens_token ON refresh_tokens (token);
 
