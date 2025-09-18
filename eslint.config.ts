@@ -19,6 +19,7 @@ export default defineConfig([
         "error",
         { prefer: "no-type-imports" },
       ],
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
 ]);
