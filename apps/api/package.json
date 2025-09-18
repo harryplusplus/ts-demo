@@ -10,18 +10,20 @@
     "start.prod": "node dist/main.js",
     "gen-types.db": "kysely-codegen",
     "gen-types.env": "node scripts/gen-types-env.mts",
-    "db.migrate": "node scripts/flyway.mts migrate"
+    "migrate-db": "node scripts/flyway.mts migrate"
   },
   "dependencies": {
     "@nestjs/common": "11.1.6",
     "@nestjs/core": "11.1.6",
     "@nestjs/platform-express": "11.1.6",
+    "bcrypt": "6.0.0",
     "dotenv": "17.2.2",
     "express": "5.1.0",
     "http-terminator": "3.2.0",
     "kysely": "0.28.7",
     "nestjs-graceful-shutdown": "1.0.3",
     "pg": "8.16.3",
-    "source-map-support": "0.5.21"
+    "source-map-support": "0.5.21",
+    "zod": "4.1.9"
   }
 }

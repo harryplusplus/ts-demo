@@ -3,6 +3,7 @@
     "esbenp.prettier-vscode",
     "redhat.vscode-yaml",
     "renesaarsoo.sql-formatter-vsc",
+    "streetsidesoftware.code-spell-checker",
     "usernamehw.errorlens"
   ]
 }

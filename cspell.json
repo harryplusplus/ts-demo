@@ -1,0 +1,7 @@
+{
+  "enabledFileTypes": {
+    "typescript": true
+  },
+  "ignorePaths": [],
+  "words": ["kysely"]
+}

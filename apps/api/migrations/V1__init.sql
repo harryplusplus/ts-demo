@@ -1,23 +1,19 @@
 CREATE TABLE users (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    -- id 대신 외부 노출용
+    -- 공개 고유키
     uuid UUID NOT NULL UNIQUE,
-    -- UNIQUE: 이메일 중복 검사
-    -- GET /api/users/check-email
+    -- Why unique: 이메일 중복 방지 및 조회
     email TEXT NOT NULL UNIQUE,
-    password_hashed TEXT NOT NULL
+    password_hashed TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMPTZ
 );
-
--- 회원가입
--- POST /api/users/signup { email, password }
--- 로그인
--- POST /api/users/signin { email, password }
-CREATE INDEX idx_users_email_password_hashed ON users (email, password_hashed);
 
 CREATE TABLE refresh_tokens (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id BIGINT NOT NULL,
-    -- UNIQUE: 생성 및 갱신시 중복 검사
+    -- Why unique: 중복 방지
     token TEXT NOT NULL UNIQUE,
     issued_at TIMESTAMPTZ NOT NULL,
     expires_at TIMESTAMPTZ
@@ -26,15 +22,15 @@ CREATE TABLE refresh_tokens (
 ALTER TABLE refresh_tokens
 ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id);
 
--- 리프레시 토큰 갱신
--- POST /api/refresh-tokens/refresh { refreshToken }
+-- Why: 리프레시 토큰 갱신
 CREATE INDEX idx_refresh_tokens_token ON refresh_tokens (token);
 
+-- Reference: https://developer.paddle.com/api-reference/customers/overview
 CREATE TABLE paddle_customers (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    -- UNIQUE: user 1:1 매핑
+    -- Why unique: user 1:1 매핑
     user_id BIGINT NOT NULL UNIQUE,
-    -- UNIQUE: Paddle customer_id
+    -- Why unique: 고유 Paddle customer.id
     customer_id TEXT NOT NULL UNIQUE
 );
 

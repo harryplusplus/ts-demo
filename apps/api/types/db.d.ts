@@ -3,4 +3,56 @@
  * Please do not edit it manually.
  */
 
-export interface DB {}
+import type { ColumnType } from "kysely";
+
+export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S, I | undefined, U>
+  : ColumnType<T, T | undefined, T>;
+
+export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>;
+
+export type Timestamp = ColumnType<Date, Date | string, Date | string>;
+
+export interface FlywaySchemaHistory {
+  checksum: number | null;
+  description: string;
+  executionTime: number;
+  installedBy: string;
+  installedOn: Generated<Timestamp>;
+  installedRank: number;
+  script: string;
+  success: boolean;
+  type: string;
+  version: string | null;
+}
+
+export interface PaddleCustomers {
+  customerId: string;
+  id: Generated<Int8>;
+  userId: Int8;
+}
+
+export interface RefreshTokens {
+  expiresAt: Timestamp | null;
+  id: Generated<Int8>;
+  issuedAt: Timestamp;
+  token: string;
+  userId: Int8;
+}
+
+export interface Users {
+  createdAt: Generated<Timestamp>;
+  deletedAt: Timestamp | null;
+  email: string;
+  id: Generated<Int8>;
+  passwordHashed: string;
+  updatedAt: Generated<Timestamp>;
+  uuid: string;
+}
+
+export interface DB {
+  flywaySchemaHistory: FlywaySchemaHistory;
+  paddleCustomers: PaddleCustomers;
+  refreshTokens: RefreshTokens;
+  users: Users;
+}
