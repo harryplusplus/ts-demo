@@ -1,28 +1,34 @@
 import { RefreshTokensRepository } from "@/refresh-tokens/refresh-tokens.repository";
 import { UsersRepository } from "@/users/users.repository";
-import { compare, hash } from "@/utils/hash";
 import { Transactional } from "@nestjs-cls/transactional";
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
 import { addDays } from "date-fns";
-import { EmailExistsQuery, SigninBody, SignupBody } from "./auth.types";
+import { AuthHashService } from "./auth-hash.service";
+import { AuthJwtService } from "./auth-jwt.service";
+import {
+  EmailExistsQueryDto,
+  SigninBodyDto,
+  SignupBodyDto,
+} from "./auth.types";
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly jwtService: JwtService,
     private readonly usersRepository: UsersRepository,
-    private readonly refreshTokensRepository: RefreshTokensRepository
+    private readonly refreshTokensRepository: RefreshTokensRepository,
+    private readonly authJwtService: AuthJwtService,
+    private readonly authHashService: AuthHashService
   ) {}
 
-  @Transactional()
-  async signup(input: SignupBody) {
+  async signup(input: SignupBodyDto) {
     const { email, password } = input;
-    const passwordHashed = await hash(password);
+    const passwordHashed = await this.authHashService.hashPassword({
+      password,
+    });
     await this.usersRepository.createUser({
       email,
       passwordHashed,
@@ -30,14 +36,14 @@ export class AuthService {
   }
 
   @Transactional()
-  async signin(input: SigninBody) {
+  async signin(input: SigninBodyDto) {
     const { email, password } = input;
     const userWithSensitiveData =
       await this.usersRepository.findUserWithSensitiveDataByEmail({ email });
-    const matched = await compare(
+    const matched = await this.authHashService.comparePassword({
       password,
-      userWithSensitiveData.passwordHashed
-    );
+      passwordHashed: userWithSensitiveData.passwordHashed,
+    });
     if (!matched) {
       throw new BadRequestException("Invalid password.");
     }
@@ -49,13 +55,13 @@ export class AuthService {
 
     // NOTE: 데모에서는 단일 리프레시 토큰만 사용함.
     if (refreshTokens.length > 0) {
-      const accessToken = await this.createAccessToken({
+      const accessToken = await this.authJwtService.createAccessToken({
         userUuid: userWithSensitiveData.uuid,
       });
       return { accessToken };
     }
 
-    const refreshToken = await this.createRefreshToken({
+    const refreshToken = await this.authJwtService.createRefreshToken({
       userUuid: userWithSensitiveData.uuid,
     });
     await this.refreshTokensRepository.createRefreshToken({
@@ -64,7 +70,7 @@ export class AuthService {
       issuedAt: new Date(),
       expiresAt: addDays(new Date(), 7),
     });
-    const accessToken = await this.createAccessToken({
+    const accessToken = await this.authJwtService.createAccessToken({
       userUuid: userWithSensitiveData.uuid,
     });
 
@@ -74,40 +80,16 @@ export class AuthService {
     };
   }
 
-  private async createAccessToken(input: { userUuid: string }) {
-    const { userUuid } = input;
-    const accessToken = await this.jwtService.signAsync(
-      {},
-      {
-        subject: userUuid,
-        expiresIn: "15m",
-      }
-    );
-    return accessToken;
-  }
-
-  private async createRefreshToken(input: { userUuid: string }) {
-    const { userUuid } = input;
-    const refreshToken = await this.jwtService.signAsync(
-      {},
-      {
-        subject: userUuid,
-        noTimestamp: true,
-      }
-    );
-    return refreshToken;
-  }
-
-  async emailExists(input: EmailExistsQuery) {
+  async emailExists(input: EmailExistsQueryDto) {
     const { email } = input;
     try {
       await this.usersRepository.findUserWithSensitiveDataByEmail({
         email,
       });
-      return true;
+      return { exists: true };
     } catch (e) {
       if (e instanceof NotFoundException) {
-        return false;
+        return { exists: false };
       }
 
       throw e;

@@ -6,11 +6,13 @@ import { UsersModule } from "@/users/users.module";
 import { ClsPluginTransactional } from "@nestjs-cls/transactional";
 import { TransactionalAdapterKysely } from "@nestjs-cls/transactional-adapter-kysely";
 import { Module } from "@nestjs/common";
+import { APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
 import { JwtModule } from "@nestjs/jwt";
 import { CamelCasePlugin, PostgresDialect } from "kysely";
 import { ClsModule } from "nestjs-cls";
 import { GracefulShutdownModule } from "nestjs-graceful-shutdown";
 import { KYSELY_MODULE_CONNECTION_TOKEN, KyselyModule } from "nestjs-kysely";
+import { ZodSerializerInterceptor, ZodValidationPipe } from "nestjs-zod";
 import { Pool } from "pg";
 
 @Module({
@@ -54,6 +56,16 @@ import { Pool } from "pg";
     UsersModule,
     RefreshTokensModule,
     AuthModule,
+  ],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useClass: ZodValidationPipe,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ZodSerializerInterceptor,
+    },
   ],
 })
 export class AppModule {}

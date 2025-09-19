@@ -1,18 +1,35 @@
+import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 
-export const SignupBody = z.object({
-  email: z.email(),
-  password: z.string(),
-});
-export type SignupBody = z.infer<typeof SignupBody>;
+export class SignupBodyDto extends createZodDto(
+  z.object({
+    email: z.email(),
+    password: z.string(),
+  })
+) {}
 
-export const SigninBody = z.object({
-  email: z.email(),
-  password: z.string(),
-});
-export type SigninBody = z.infer<typeof SigninBody>;
+export class SigninBodyDto extends createZodDto(
+  z.object({
+    email: z.email(),
+    password: z.string(),
+  })
+) {}
 
-export const EmailExistsQuery = z.object({
-  email: z.email(),
-});
-export type EmailExistsQuery = z.infer<typeof EmailExistsQuery>;
+export class SigninResponseDto extends createZodDto(
+  z.object({
+    accessToken: z.string(),
+    refreshToken: z.optional(z.string()),
+  })
+) {}
+
+export class EmailExistsQueryDto extends createZodDto(
+  z.object({
+    email: z.email(),
+  })
+) {}
+
+export class EmailExistsResponseDto extends createZodDto(
+  z.object({
+    exists: z.boolean(),
+  })
+) {}
