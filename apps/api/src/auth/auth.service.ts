@@ -5,7 +5,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { addDays } from "date-fns";
 import { AuthHashService } from "./auth-hash.service";
 import { AuthJwtService } from "./auth-jwt.service";
-import { SigninBodyDto, SignupBodyDto } from "./auth.types";
+import { SigninBodyDto, SignupBodyDto } from "./auth-types";
 
 @Injectable()
 export class AuthService {

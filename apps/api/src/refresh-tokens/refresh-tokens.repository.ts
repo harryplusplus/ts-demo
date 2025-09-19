@@ -1,5 +1,5 @@
-import { isUniqueViolation } from "@/pg/pg.utils";
-import { KyselyTransactionalAdapter } from "@/transactional/transactional.types";
+import { isUniqueViolation } from "@/pg/pg-utils";
+import { KyselyTransactionalAdapter } from "@/transactional/transactional-types";
 import { InjectTransaction, Transaction } from "@nestjs-cls/transactional";
 import { ConflictException, Injectable } from "@nestjs/common";
 

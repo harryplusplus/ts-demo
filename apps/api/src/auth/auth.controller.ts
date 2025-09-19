@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { ZodResponse } from "nestjs-zod";
+import { SigninResponseDto, SignupBodyDto } from "./auth-types";
 import { AuthService } from "./auth.service";
-import { SigninResponseDto, SignupBodyDto } from "./auth.types";
 
 @Controller("/auth")
 export class AuthController {
