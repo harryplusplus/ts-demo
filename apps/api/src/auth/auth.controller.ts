@@ -1,12 +1,7 @@
-import { Body, Controller, Get, Post, Query } from "@nestjs/common";
+import { Body, Controller, Post } from "@nestjs/common";
 import { ZodResponse } from "nestjs-zod";
 import { AuthService } from "./auth.service";
-import {
-  EmailExistsQueryDto,
-  EmailExistsResponseDto,
-  SigninResponseDto,
-  SignupBodyDto,
-} from "./auth.types";
+import { SigninResponseDto, SignupBodyDto } from "./auth.types";
 
 @Controller("/auth")
 export class AuthController {
@@ -21,11 +16,5 @@ export class AuthController {
   @ZodResponse({ type: SigninResponseDto })
   async signin(@Body() body: SignupBodyDto) {
     return await this.authService.signin(body);
-  }
-
-  @Get("/email-exists")
-  @ZodResponse({ type: EmailExistsResponseDto })
-  async emailExists(@Query() query: EmailExistsQueryDto) {
-    return await this.authService.emailExists(query);
   }
 }

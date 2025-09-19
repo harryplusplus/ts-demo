@@ -21,15 +21,3 @@ export class SigninResponseDto extends createZodDto(
     refreshToken: z.optional(z.string()),
   })
 ) {}
-
-export class EmailExistsQueryDto extends createZodDto(
-  z.object({
-    email: z.email(),
-  })
-) {}
-
-export class EmailExistsResponseDto extends createZodDto(
-  z.object({
-    exists: z.boolean(),
-  })
-) {}

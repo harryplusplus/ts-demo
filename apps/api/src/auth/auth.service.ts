@@ -1,19 +1,11 @@
 import { RefreshTokensRepository } from "@/refresh-tokens/refresh-tokens.repository";
 import { UsersRepository } from "@/users/users.repository";
 import { Transactional } from "@nestjs-cls/transactional";
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { addDays } from "date-fns";
 import { AuthHashService } from "./auth-hash.service";
 import { AuthJwtService } from "./auth-jwt.service";
-import {
-  EmailExistsQueryDto,
-  SigninBodyDto,
-  SignupBodyDto,
-} from "./auth.types";
+import { SigninBodyDto, SignupBodyDto } from "./auth.types";
 
 @Injectable()
 export class AuthService {
@@ -78,21 +70,5 @@ export class AuthService {
       accessToken,
       refreshToken,
     };
-  }
-
-  async emailExists(input: EmailExistsQueryDto) {
-    const { email } = input;
-    try {
-      await this.usersRepository.findUserWithSensitiveDataByEmail({
-        email,
-      });
-      return { exists: true };
-    } catch (e) {
-      if (e instanceof NotFoundException) {
-        return { exists: false };
-      }
-
-      throw e;
-    }
   }
 }
