@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "@ts-demo/api",
   "type": "commonjs",
   "scripts": {
     "build": "nest build",
@@ -36,6 +36,7 @@
     "zod": "4.1.9"
   },
   "devDependencies": {
+    "@ts-demo/paddle-task": "workspace:*",
     "@types/bcrypt": "6.0.0",
     "@types/pg": "8.15.5"
   }

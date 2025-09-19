@@ -28,7 +28,7 @@ function main() {
     .map((x) => `        ${x}?: string;`)
     .join("\n");
   const envDts = `${header}${body}${footer}`;
-  fs.writeFileSync("types/env.d.ts", envDts);
+  fs.writeFileSync("src/types/env.d.ts", envDts);
 }
 
 main();

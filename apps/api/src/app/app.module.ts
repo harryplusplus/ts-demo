@@ -1,7 +1,7 @@
 import { AuthModule } from "@/auth/auth.module";
-import { DB } from "@/db";
 import { PG_POOL, PgModule } from "@/pg/pg.module";
 import { RefreshTokensModule } from "@/refresh-tokens/refresh-tokens.module";
+import { DB } from "@/types/db";
 import { UsersModule } from "@/users/users.module";
 import { ClsPluginTransactional } from "@nestjs-cls/transactional";
 import { TransactionalAdapterKysely } from "@nestjs-cls/transactional-adapter-kysely";

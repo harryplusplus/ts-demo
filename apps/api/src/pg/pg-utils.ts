@@ -1,4 +1,4 @@
-import { DB } from "@/db";
+import { DB } from "@/types/db";
 import { DatabaseError } from "pg";
 
 export function isUniqueViolation<

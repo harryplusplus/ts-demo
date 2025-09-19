@@ -14,12 +14,5 @@ export default defineConfig([
         tsconfigRootDir: import.meta.dirname,
       },
     },
-    rules: {
-      "@typescript-eslint/consistent-type-imports": [
-        "error",
-        { prefer: "no-type-imports" },
-      ],
-      "@typescript-eslint/no-explicit-any": "off",
-    },
   },
 ]);
