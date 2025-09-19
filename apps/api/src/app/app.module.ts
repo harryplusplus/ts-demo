@@ -1,4 +1,5 @@
 import { AuthModule } from "@/auth/auth.module";
+import { JwtAuthGuard } from "@/auth/jwt-auth.guard";
 import { PG_POOL, PgModule } from "@/pg/pg.module";
 import { RefreshTokensModule } from "@/refresh-tokens/refresh-tokens.module";
 import { DB } from "@/types/db";
@@ -6,8 +7,7 @@ import { UsersModule } from "@/users/users.module";
 import { ClsPluginTransactional } from "@nestjs-cls/transactional";
 import { TransactionalAdapterKysely } from "@nestjs-cls/transactional-adapter-kysely";
 import { Module } from "@nestjs/common";
-import { APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
-import { JwtModule } from "@nestjs/jwt";
+import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
 import { CamelCasePlugin, PostgresDialect } from "kysely";
 import { ClsModule } from "nestjs-cls";
 import { GracefulShutdownModule } from "nestjs-graceful-shutdown";
@@ -18,17 +18,6 @@ import { Pool } from "pg";
 @Module({
   imports: [
     GracefulShutdownModule.forRoot(),
-    JwtModule.register({
-      global: true,
-      secret:
-        process.env.JWT_SECRET ??
-        (() => {
-          throw new Error("Invalid JWT_SECRET.");
-        })(),
-      signOptions: {
-        issuer: "api",
-      },
-    }),
     PgModule,
     KyselyModule.forRootAsync({
       imports: [PgModule],
@@ -65,6 +54,10 @@ import { Pool } from "pg";
     {
       provide: APP_INTERCEPTOR,
       useClass: ZodSerializerInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
     },
   ],
 })

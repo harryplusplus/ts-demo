@@ -1,6 +1,6 @@
 import { isUniqueViolation } from "@/pg/pg-utils";
 import { KyselyTransactionalAdapter } from "@/transactional/transactional-types";
-import { InjectTransaction, Transaction } from "@nestjs-cls/transactional";
+import { InjectTransaction, type Transaction } from "@nestjs-cls/transactional";
 import { ConflictException, Injectable } from "@nestjs/common";
 
 @Injectable()
@@ -10,7 +10,7 @@ export class RefreshTokensRepository {
     private readonly tx: Transaction<KyselyTransactionalAdapter>
   ) {}
 
-  async createRefreshToken(input: {
+  async create(input: {
     userId: string;
     token: string;
     issuedAt: Date;
@@ -31,7 +31,7 @@ export class RefreshTokensRepository {
     }
   }
 
-  async findAllRefreshTokensByUserId(input: { userId: string }) {
+  async findAllByUserId(input: { userId: string }) {
     const { userId } = input;
     return await this.tx
       .selectFrom("refreshTokens")

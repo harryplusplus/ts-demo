@@ -1,11 +1,7 @@
 import { isUniqueViolation } from "@/pg/pg-utils";
 import { KyselyTransactionalAdapter } from "@/transactional/transactional-types";
-import { InjectTransaction, Transaction } from "@nestjs-cls/transactional";
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { InjectTransaction, type Transaction } from "@nestjs-cls/transactional";
+import { ConflictException, Injectable } from "@nestjs/common";
 
 @Injectable()
 export class UsersRepository {
@@ -14,7 +10,7 @@ export class UsersRepository {
     private readonly tx: Transaction<KyselyTransactionalAdapter>
   ) {}
 
-  async createUser(input: { email: string; passwordHashed: string }) {
+  async create(input: { email: string; passwordHashed: string }) {
     const { email, passwordHashed } = input;
     const uuid = crypto.randomUUID();
     try {
@@ -34,19 +30,23 @@ export class UsersRepository {
     }
   }
 
-  async findUserWithSensitiveDataByEmail(input: { email: string }) {
+  async findByEmail(input: { email: string }) {
     const { email } = input;
-    const userWithSensitiveData = await this.tx
+    return await this.tx
       .selectFrom("users")
       .select(["id", "uuid", "passwordHashed"])
       .where("email", "=", email)
       .where("deletedAt", "is", null)
       .executeTakeFirst();
+  }
 
-    if (!userWithSensitiveData) {
-      throw new NotFoundException("User not found.");
-    }
-
-    return userWithSensitiveData;
+  async findByUuid(input: { uuid: string }) {
+    const { uuid } = input;
+    return await this.tx
+      .selectFrom("users")
+      .select(["id", "uuid"])
+      .where("uuid", "=", uuid)
+      .where("deletedAt", "is", null)
+      .executeTakeFirst();
   }
 }

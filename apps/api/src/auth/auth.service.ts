@@ -1,11 +1,11 @@
 import { RefreshTokensRepository } from "@/refresh-tokens/refresh-tokens.repository";
 import { UsersRepository } from "@/users/users.repository";
 import { Transactional } from "@nestjs-cls/transactional";
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { addDays } from "date-fns";
-import { AuthHashService } from "./auth-hash.service";
 import { AuthJwtService } from "./auth-jwt.service";
-import { SigninBodyDto, SignupBodyDto } from "./auth-types";
+import { JwtPayloadDto, SignupBodyDto, type User } from "./auth-types";
+import { PasswordHashService } from "./password-hash.service";
 
 @Injectable()
 export class AuthService {
@@ -13,62 +13,82 @@ export class AuthService {
     private readonly usersRepository: UsersRepository,
     private readonly refreshTokensRepository: RefreshTokensRepository,
     private readonly authJwtService: AuthJwtService,
-    private readonly authHashService: AuthHashService
+    private readonly passwordHashService: PasswordHashService
   ) {}
 
   async signup(input: SignupBodyDto) {
     const { email, password } = input;
-    const passwordHashed = await this.authHashService.hashPassword({
+    const passwordHashed = await this.passwordHashService.hash({
       password,
     });
-    await this.usersRepository.createUser({
+    await this.usersRepository.create({
       email,
       passwordHashed,
     });
   }
 
   @Transactional()
-  async signin(input: SigninBodyDto) {
-    const { email, password } = input;
-    const userWithSensitiveData =
-      await this.usersRepository.findUserWithSensitiveDataByEmail({ email });
-    const matched = await this.authHashService.comparePassword({
-      password,
-      passwordHashed: userWithSensitiveData.passwordHashed,
+  async signin(user: User) {
+    const refreshTokens = await this.refreshTokensRepository.findAllByUserId({
+      userId: user.id,
     });
-    if (!matched) {
-      throw new BadRequestException("Invalid password.");
-    }
-
-    const refreshTokens =
-      await this.refreshTokensRepository.findAllRefreshTokensByUserId({
-        userId: userWithSensitiveData.id,
-      });
 
     // NOTE: 데모에서는 단일 리프레시 토큰만 사용함.
     if (refreshTokens.length > 0) {
       const accessToken = await this.authJwtService.createAccessToken({
-        userUuid: userWithSensitiveData.uuid,
+        userUuid: user.uuid,
       });
       return { accessToken };
     }
 
     const refreshToken = await this.authJwtService.createRefreshToken({
-      userUuid: userWithSensitiveData.uuid,
+      userUuid: user.uuid,
     });
-    await this.refreshTokensRepository.createRefreshToken({
-      userId: userWithSensitiveData.id,
+    await this.refreshTokensRepository.create({
+      userId: user.id,
       token: refreshToken,
       issuedAt: new Date(),
       expiresAt: addDays(new Date(), 7),
     });
     const accessToken = await this.authJwtService.createAccessToken({
-      userUuid: userWithSensitiveData.uuid,
+      userUuid: user.uuid,
     });
 
     return {
       accessToken,
       refreshToken,
     };
+  }
+
+  async findUserByEmailAndPassword(input: { email: string; password: string }) {
+    const { email, password } = input;
+    const maybeUser = await this.usersRepository.findByEmail({
+      email,
+    });
+    if (!maybeUser) {
+      throw new UnauthorizedException("Invalid email.");
+    }
+
+    const { passwordHashed, ...user } = maybeUser;
+    if (
+      !(await this.passwordHashService.compare({
+        password,
+        passwordHashed,
+      }))
+    ) {
+      throw new UnauthorizedException("Invalid password.");
+    }
+
+    return user;
+  }
+
+  async findUserByJwtPayload(input: JwtPayloadDto) {
+    const { sub } = input;
+    const maybeUser = await this.usersRepository.findByUuid({ uuid: sub });
+    if (!maybeUser) {
+      throw new UnauthorizedException("Invalid token.");
+    }
+
+    return maybeUser;
   }
 }
