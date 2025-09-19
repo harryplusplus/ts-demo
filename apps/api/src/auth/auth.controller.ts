@@ -27,5 +27,7 @@ export class AuthController {
   @Post("/refresh")
   @Public()
   @UseGuards(JwtRefreshAuthGuard)
-  async refresh() {}
+  async refresh() {
+    // TODO
+  }
 }
