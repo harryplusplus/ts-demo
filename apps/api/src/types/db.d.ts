@@ -33,10 +33,13 @@ export interface PaddleCustomers {
 }
 
 export interface RefreshTokens {
+  createdAt: Generated<Timestamp>;
+  deletedAt: Timestamp | null;
   expiresAt: Timestamp | null;
   id: Generated<Int8>;
   issuedAt: Timestamp;
   token: string;
+  updatedAt: Generated<Timestamp>;
   userId: Int8;
 }
 

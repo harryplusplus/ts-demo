@@ -16,14 +16,17 @@ CREATE TABLE refresh_tokens (
     -- Why unique: 중복 방지
     token TEXT NOT NULL UNIQUE,
     issued_at TIMESTAMPTZ NOT NULL,
-    expires_at TIMESTAMPTZ
+    expires_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMPTZ
 );
 
 ALTER TABLE refresh_tokens
 ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id);
 
--- Why: 최초 로그인시 생성을 위해 user_id로 조회함.
-CREATE INDEX idx_refresh_tokens_user_id ON refresh_tokens (user_id);
+-- Why: 최초 로그인 또는 만료 후 로그인
+CREATE INDEX idx_refresh_tokens_user_id_and_deleted_at ON refresh_tokens (user_id, deleted_at);
 
 -- Why: 리프레시 토큰 갱신
 CREATE INDEX idx_refresh_tokens_token ON refresh_tokens (token);

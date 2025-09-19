@@ -1,5 +1,5 @@
 import { AuthModule } from "@/auth/auth.module";
-import { JwtAuthGuard } from "@/auth/jwt-auth.guard";
+import { JwtAccessAuthGuard } from "@/auth/jwt-access-auth.guard";
 import { PG_POOL, PgModule } from "@/pg/pg.module";
 import { RefreshTokensModule } from "@/refresh-tokens/refresh-tokens.module";
 import { DB } from "@/types/db";
@@ -57,7 +57,7 @@ import { Pool } from "pg";
     },
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useClass: JwtAccessAuthGuard,
     },
   ],
 })

@@ -7,7 +7,8 @@ import { AuthJwtService } from "./auth-jwt.service";
 import { getJwtSecret } from "./auth-utils";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
-import { JwtStrategy } from "./jwt.strategy";
+import { JwtAccessStrategy } from "./jwt-access.strategy";
+import { JwtRefreshStrategy } from "./jwt-refresh.strategy";
 import { LocalStrategy } from "./local.strategy";
 import { PasswordHashService } from "./password-hash.service";
 
@@ -29,7 +30,8 @@ import { PasswordHashService } from "./password-hash.service";
     AuthJwtService,
     PasswordHashService,
     LocalStrategy,
-    JwtStrategy,
+    JwtAccessStrategy,
+    JwtRefreshStrategy,
   ],
 })
 export class AuthModule {}

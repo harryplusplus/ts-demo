@@ -8,8 +8,8 @@
     "dev": "concurrently --kill-others-on-fail --names \"start,types\" \"pnpm start.dev\" \"pnpm check-types.dev\"",
     "gen-types.db": "kysely-codegen",
     "gen-types.env": "node scripts/gen-types-env.mts",
-    "migrate-db": "node scripts/flyway.mts migrate",
-    "migrate-db.dev": "pnpm migrate-db && pnpm gen-types.db",
+    "migrate": "node scripts/flyway.mts migrate",
+    "migrate.dev": "pnpm migrate && pnpm gen-types.db",
     "start.dev": "nest start -w",
     "start.prod": "node dist/main.js"
   },
@@ -25,6 +25,7 @@
     "bcrypt": "6.0.0",
     "date-fns": "4.1.0",
     "dotenv": "17.2.2",
+    "express": "5.1.0",
     "helmet": "8.1.0",
     "http-terminator": "3.2.0",
     "kysely": "0.28.7",
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@ts-demo/paddle-task": "workspace:*",
     "@types/bcrypt": "6.0.0",
+    "@types/express": "5.0.3",
     "@types/passport-jwt": "4.0.1",
     "@types/passport-local": "1.0.38",
     "@types/pg": "8.15.5"

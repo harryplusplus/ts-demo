@@ -5,8 +5,13 @@ import { JwtPayloadDto } from "./auth-types";
 import { getJwtSecret } from "./auth-utils";
 import { AuthService } from "./auth.service";
 
+export const JWT_ACCESS_STRATEGY = "jwt-access";
+
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtAccessStrategy extends PassportStrategy(
+  Strategy,
+  JWT_ACCESS_STRATEGY
+) {
   constructor(private authService: AuthService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -15,8 +20,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: unknown) {
-    const parsed = JwtPayloadDto.schema.parse(payload);
-    return await this.authService.findUserByJwtPayload(parsed);
+  async validate(rawPayload: unknown) {
+    const payload = JwtPayloadDto.schema.parse(rawPayload);
+    return await this.authService.parseAccessTokenPayload(payload);
   }
 }

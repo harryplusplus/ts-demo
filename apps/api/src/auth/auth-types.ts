@@ -20,6 +20,12 @@ export type User = {
   uuid: string;
 };
 
+export class JwtRefreshAuthInfoDto extends createZodDto(
+  z.object({
+    refreshToken: z.string(),
+  })
+) {}
+
 export class JwtPayloadDto extends createZodDto(
   z.object({
     sub: z.string(),
