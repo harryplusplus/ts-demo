@@ -18,17 +18,24 @@ async function bootstrap() {
   app.use(helmet());
 
   if (process.env.NODE_ENV !== "production") {
-    SwaggerModule.setup("/openapi", app, () =>
-      cleanupOpenApiDoc(
-        SwaggerModule.createDocument(
-          app,
-          new DocumentBuilder()
-            .setTitle("TypeScript Demo API")
-            .setVersion("1.0")
-            .setOpenAPIVersion("3.0.0")
-            .build()
-        )
-      )
+    SwaggerModule.setup(
+      "/openapi/ui",
+      app,
+      () =>
+        cleanupOpenApiDoc(
+          SwaggerModule.createDocument(
+            app,
+            new DocumentBuilder()
+              .setTitle("TypeScript Demo API")
+              .setVersion("1.0")
+              .setOpenAPIVersion("3.0.0")
+              .build()
+          )
+        ),
+      {
+        jsonDocumentUrl: "/openapi/json",
+        yamlDocumentUrl: "/openapi/yaml",
+      }
     );
   }
 
