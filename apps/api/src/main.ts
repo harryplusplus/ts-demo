@@ -3,22 +3,19 @@ import "source-map-support/register";
 
 import { AppModule } from "@/app/app.module";
 import { NestFactory } from "@nestjs/core";
-import { ExpressAdapter } from "@nestjs/platform-express";
+import { NestExpressApplication } from "@nestjs/platform-express";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import express from "express";
+import helmet from "helmet";
 import { setupGracefulShutdown } from "nestjs-graceful-shutdown";
 import { cleanupOpenApiDoc } from "nestjs-zod";
 
 async function bootstrap() {
-  const expressInstance = express();
-  expressInstance.set("trust proxy", true);
-
-  const app = await NestFactory.create(
-    AppModule,
-    new ExpressAdapter(expressInstance)
-  );
-
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
+  });
   setupGracefulShutdown({ app });
+  app.set("trust proxy", "loopback");
+  app.use(helmet());
 
   if (process.env.NODE_ENV !== "production") {
     SwaggerModule.setup("/openapi", app, () =>
