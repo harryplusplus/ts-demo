@@ -10,8 +10,8 @@
     "gen-types.env": "node scripts/gen-types-env.mts",
     "migrate": "node scripts/flyway.mts migrate",
     "migrate.dev": "pnpm migrate && pnpm gen-types.db",
-    "start.dev": "nest start -w",
-    "start.prod": "node dist/main.js"
+    "start.dev": "TZ=UTC nest start -w",
+    "start.prod": "TZ=UTC node dist/main.js"
   },
   "dependencies": {
     "@nestjs-cls/transactional": "3.1.0",

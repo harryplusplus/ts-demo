@@ -10,6 +10,13 @@ import { setupGracefulShutdown } from "nestjs-graceful-shutdown";
 import { cleanupOpenApiDoc } from "nestjs-zod";
 
 async function bootstrap() {
+  const timezoneOffset = new Date().getTimezoneOffset();
+  if (timezoneOffset !== 0) {
+    throw new Error(
+      `TimeZone must be UTC. Current offset(hours): ${timezoneOffset / 60}`
+    );
+  }
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
   });
