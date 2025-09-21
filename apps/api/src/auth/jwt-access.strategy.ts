@@ -15,13 +15,13 @@ export class JwtAccessStrategy extends PassportStrategy(
   constructor(private authService: AuthService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
       secretOrKey: getJwtSecret(),
+      ignoreExpiration: false,
     });
   }
 
   async validate(rawPayload: unknown) {
     const payload = JwtPayloadDto.schema.parse(rawPayload);
-    return await this.authService.parseAccessTokenPayload(payload);
+    return await this.authService.parseJwtPayload(payload);
   }
 }

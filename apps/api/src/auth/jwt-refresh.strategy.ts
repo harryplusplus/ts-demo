@@ -1,8 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
-import { Request } from "express";
-import { Strategy } from "passport-jwt";
-import { JwtPayloadDto, JwtRefreshAuthInfoDto } from "./auth-types";
+import { ExtractJwt, Strategy } from "passport-jwt";
+import { JwtPayloadDto } from "./auth-types";
 import { getJwtSecret } from "./auth-utils";
 import { AuthService } from "./auth.service";
 
@@ -15,32 +14,14 @@ export class JwtRefreshStrategy extends PassportStrategy(
 ) {
   constructor(private authService: AuthService) {
     super({
-      ignoreExpiration: true,
+      jwtFromRequest: ExtractJwt.fromBodyField("refreshToken"),
       secretOrKey: getJwtSecret(),
-      passReqToCallback: true,
-      jwtFromRequest: (req: Request) => {
-        const { authorization } = req.headers;
-        if (authorization) {
-          const [scheme, token] = authorization.split(" ");
-          if (scheme?.toLowerCase() === "refresh" && token) {
-            const authInfo: JwtRefreshAuthInfoDto = {
-              refreshToken: token,
-            };
-            req.authInfo = authInfo;
-            return token;
-          }
-        }
-        return null;
-      },
+      ignoreExpiration: true,
     });
   }
 
-  async validate(req: Request, rawPayload: unknown) {
-    const authInfo = JwtRefreshAuthInfoDto.schema.parse(req.authInfo);
+  async validate(rawPayload: unknown) {
     const payload = JwtPayloadDto.schema.parse(rawPayload);
-    return await this.authService.parseRefreshTokenPayload({
-      authInfo,
-      payload,
-    });
+    return await this.authService.parseJwtPayload(payload);
   }
 }

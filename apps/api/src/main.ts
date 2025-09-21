@@ -36,10 +36,23 @@ async function bootstrap() {
               .setTitle("TypeScript Demo API")
               .setVersion("1.0")
               .setOpenAPIVersion("3.0.0")
+              .addBearerAuth(
+                {
+                  type: "http",
+                  scheme: "Bearer",
+                  bearerFormat: "JWT",
+                  in: "header",
+                  name: "Authorization",
+                },
+                "token"
+              )
               .build()
           )
         ),
       {
+        swaggerOptions: {
+          persistAuthorization: true,
+        },
         jsonDocumentUrl: "/openapi/json",
         yamlDocumentUrl: "/openapi/yaml",
       }

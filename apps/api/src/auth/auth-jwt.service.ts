@@ -23,7 +23,6 @@ export class AuthJwtService {
       {},
       {
         subject: userUuid,
-        noTimestamp: true,
       }
     );
     return refreshToken;

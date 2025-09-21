@@ -31,33 +31,27 @@ export class RefreshTokensRepository {
     }
   }
 
-  async findAllByUserId(input: { userId: string }) {
+  async findFirstByUserId(input: { userId: string }) {
     const { userId } = input;
     return await this.tx
       .selectFrom("refreshTokens")
       .select("token")
       .where("userId", "=", userId)
       .where("deletedAt", "is", null)
-      .execute();
-  }
-
-  async findByToken(input: { token: string }) {
-    const { token } = input;
-    return await this.tx
-      .selectFrom("refreshTokens")
-      .select(["id", "expiresAt"])
-      .where("token", "=", token)
-      .where("deletedAt", "is", null)
+      .where((eb) =>
+        eb("expiresAt", "is", null).or("expiresAt", ">", new Date())
+      )
+      .limit(1)
       .executeTakeFirst();
   }
 
-  async delete(input: { refreshTokenId: string }) {
-    const { refreshTokenId } = input;
+  async deleteByToken(input: { token: string }) {
+    const { token } = input;
     return await this.tx
       .updateTable("refreshTokens")
       .set({ deletedAt: new Date() })
-      .where("id", "=", refreshTokenId)
+      .where("token", "=", token)
       .where("deletedAt", "is", null)
-      .executeTakeFirstOrThrow();
+      .executeTakeFirst();
   }
 }

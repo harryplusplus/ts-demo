@@ -30,7 +30,7 @@ export class UsersRepository {
     }
   }
 
-  async findByEmail(input: { email: string }) {
+  async findUniqueByEmail(input: { email: string }) {
     const { email } = input;
     return await this.tx
       .selectFrom("users")
@@ -40,7 +40,7 @@ export class UsersRepository {
       .executeTakeFirst();
   }
 
-  async findByUuid(input: { uuid: string }) {
+  async findUniqueByUuid(input: { uuid: string }) {
     const { uuid } = input;
     return await this.tx
       .selectFrom("users")

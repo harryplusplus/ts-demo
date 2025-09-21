@@ -25,11 +25,8 @@ CREATE TABLE refresh_tokens (
 ALTER TABLE refresh_tokens
 ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id);
 
--- Why: 최초 로그인 또는 만료 후 로그인
-CREATE INDEX idx_refresh_tokens_user_id_and_deleted_at ON refresh_tokens (user_id, deleted_at);
-
--- Why: 리프레시 토큰 갱신
-CREATE INDEX idx_refresh_tokens_token ON refresh_tokens (token);
+-- Why: 최초 로그인 또는 만료 후 로그인시 신규 토큰 생성을 위해
+CREATE INDEX idx_refresh_tokens_user_id_and_expires_at_and_deleted_at ON refresh_tokens (user_id, expires_at, deleted_at);
 
 -- Reference: https://developer.paddle.com/api-reference/customers/overview
 CREATE TABLE paddle_customers (

@@ -8,7 +8,21 @@ export class SignupBodyDto extends createZodDto(
   })
 ) {}
 
+export class SigninBodyDto extends createZodDto(
+  z.object({
+    email: z.email(),
+    password: z.string(),
+  })
+) {}
+
 export class SigninResponseDto extends createZodDto(
+  z.object({
+    accessToken: z.string(),
+    refreshToken: z.optional(z.string()),
+  })
+) {}
+
+export class RefreshResponseDto extends createZodDto(
   z.object({
     accessToken: z.string(),
     refreshToken: z.optional(z.string()),
@@ -20,7 +34,7 @@ export type User = {
   uuid: string;
 };
 
-export class JwtRefreshAuthInfoDto extends createZodDto(
+export class RefreshBodyDto extends createZodDto(
   z.object({
     refreshToken: z.string(),
   })
@@ -29,5 +43,6 @@ export class JwtRefreshAuthInfoDto extends createZodDto(
 export class JwtPayloadDto extends createZodDto(
   z.object({
     sub: z.string(),
+    iat: z.number(),
   })
 ) {}
