@@ -4,11 +4,11 @@
   "scripts": {
     "build": "nest build",
     "check-types": "tsc --noEmit",
+    "dev": "TZ=UTC nest start -w --type-check",
     "gen-types.db": "kysely-codegen",
     "gen-types.env": "node scripts/gen-types-env.mts",
     "migrate": "node scripts/flyway.mts migrate",
     "migrate.dev": "pnpm migrate && pnpm gen-types.db",
-    "dev": "TZ=UTC nest start -w --type-check",
     "start": "TZ=UTC node dist/main.js"
   },
   "dependencies": {
