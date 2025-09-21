@@ -4,7 +4,6 @@ import "source-map-support/register";
 import { AppModule } from "@/app/app.module";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import helmet from "helmet";
 import { setupGracefulShutdown } from "nestjs-graceful-shutdown";
 import { cleanupOpenApiDoc } from "nestjs-zod";
@@ -25,38 +24,7 @@ async function bootstrap() {
   app.use(helmet());
 
   if (process.env.NODE_ENV !== "production") {
-    SwaggerModule.setup(
-      "/openapi/ui",
-      app,
-      () =>
-        cleanupOpenApiDoc(
-          SwaggerModule.createDocument(
-            app,
-            new DocumentBuilder()
-              .setTitle("TypeScript Demo API")
-              .setVersion("1.0")
-              .setOpenAPIVersion("3.0.0")
-              .addBearerAuth(
-                {
-                  type: "http",
-                  scheme: "Bearer",
-                  bearerFormat: "JWT",
-                  in: "header",
-                  name: "Authorization",
-                },
-                "token"
-              )
-              .build()
-          )
-        ),
-      {
-        swaggerOptions: {
-          persistAuthorization: true,
-        },
-        jsonDocumentUrl: "/openapi/json",
-        yamlDocumentUrl: "/openapi/yaml",
-      }
-    );
+    await setupSwagger(app);
   }
 
   await app.listen(3000);
@@ -66,3 +34,39 @@ bootstrap().catch((e) => {
   console.error(e);
   process.exit(1);
 });
+
+async function setupSwagger(app: NestExpressApplication) {
+  const { DocumentBuilder, SwaggerModule } = await import("@nestjs/swagger");
+  const metadata = await import("./metadata");
+  await SwaggerModule.loadPluginMetadata(metadata.default);
+  SwaggerModule.setup(
+    "/api",
+    app,
+    () =>
+      cleanupOpenApiDoc(
+        SwaggerModule.createDocument(
+          app,
+          new DocumentBuilder()
+            .setTitle("TypeScript Demo API")
+            .setVersion("1.0")
+            .setOpenAPIVersion("3.1.1")
+            .addBearerAuth(
+              {
+                type: "http",
+                scheme: "Bearer",
+                bearerFormat: "JWT",
+                in: "header",
+                name: "Authorization",
+              },
+              "token"
+            )
+            .build()
+        )
+      ),
+    {
+      swaggerOptions: {
+        persistAuthorization: true,
+      },
+    }
+  );
+}
