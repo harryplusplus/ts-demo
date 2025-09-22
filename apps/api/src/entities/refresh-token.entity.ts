@@ -7,7 +7,7 @@ import {
   PrimaryKey,
   Property,
 } from "@mikro-orm/core";
-import { User } from "./user.entity.js";
+import { User } from "./user.entity";
 
 @Entity()
 @Filter({ name: "softDelete", cond: { deletedAt: null }, default: true })

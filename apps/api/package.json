@@ -1,6 +1,6 @@
 {
   "name": "@ts-demo/api",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "build": "nest build",
     "check-types": "tsc --noEmit",

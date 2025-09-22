@@ -1,7 +1,7 @@
 import "dotenv/config";
-import "source-map-support/register.js";
+import "source-map-support/register";
 
-import { AppModule } from "@/app/app.module.js";
+import { AppModule } from "@/app/app.module";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import helmet from "helmet";
@@ -43,7 +43,7 @@ function checkUtc() {
 
 async function setupSwagger(app: NestExpressApplication) {
   const { DocumentBuilder, SwaggerModule } = await import("@nestjs/swagger");
-  const metadata = await import("./metadata.js");
+  const metadata = await import("./metadata");
   await SwaggerModule.loadPluginMetadata(metadata.default);
   SwaggerModule.setup(
     "/api",

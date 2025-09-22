@@ -1,12 +1,12 @@
-import { User } from "@/entities/user.entity.js";
+import { User } from "@/entities/user.entity";
 import { Body, Controller, Post, UseGuards } from "@nestjs/common";
 import { ApiBody } from "@nestjs/swagger";
 import { ZodResponse } from "nestjs-zod";
-import { CurrentUser, Public } from "./auth-utils.js";
-import { RefreshDto, SignDto, TokenResponseDto } from "./auth.dto.js";
-import { AuthService } from "./auth.service.js";
-import { JwtRefreshAuthGuard } from "./jwt-refresh-auth.guard.js";
-import { LocalAuthGuard } from "./local-auth.guard.js";
+import { CurrentUser, Public } from "./auth-utils";
+import { RefreshDto, SignDto, TokenResponseDto } from "./auth.dto";
+import { AuthService } from "./auth.service";
+import { JwtRefreshAuthGuard } from "./jwt-refresh-auth.guard";
+import { LocalAuthGuard } from "./local-auth.guard";
 
 @Controller("/auth")
 export class AuthController {

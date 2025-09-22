@@ -1,5 +1,5 @@
-import { RefreshToken } from "@/entities/refresh-token.entity.js";
-import { User } from "@/entities/user.entity.js";
+import { RefreshToken } from "@/entities/refresh-token.entity";
+import { User } from "@/entities/user.entity";
 import { EntityManager, Transactional } from "@mikro-orm/postgresql";
 import {
   Injectable,
@@ -8,9 +8,9 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { addDays } from "date-fns";
-import { AuthJwtService } from "./auth-jwt.service.js";
-import { JwtPayloadDto, RefreshDto, SignDto } from "./auth.dto.js";
-import { PasswordHashService } from "./password-hash.service.js";
+import { AuthJwtService } from "./auth-jwt.service";
+import { JwtPayloadDto, RefreshDto, SignDto } from "./auth.dto";
+import { PasswordHashService } from "./password-hash.service";
 
 @Injectable()
 export class AuthService {

@@ -1,6 +1,6 @@
-import { AuthModule } from "@/auth/auth.module.js";
-import { JwtAccessAuthGuard } from "@/auth/jwt-access-auth.guard.js";
-import mikroOrmConfig from "@/mikro-orm.config.js";
+import { AuthModule } from "@/auth/auth.module";
+import { JwtAccessAuthGuard } from "@/auth/jwt-access-auth.guard";
+import mikroOrmConfig from "@/mikro-orm.config";
 import { MikroOrmModule } from "@mikro-orm/nestjs";
 import { Module } from "@nestjs/common";
 import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
