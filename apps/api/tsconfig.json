@@ -6,6 +6,9 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
-  "exclude": ["**/*test.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*test.ts"],
+  "ts-node": {
+    "swc": true
+  }
 }

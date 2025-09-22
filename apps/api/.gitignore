@@ -1,2 +1,5 @@
-# NestJS OpenAPI support generated file.
+# NestJS OpenAPI
 /src/metadata.ts
+
+# MikroORM
+/temp/

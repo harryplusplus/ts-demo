@@ -1,4 +1,0 @@
-# https://github.com/RobinBlomberg/kysely-codegen
-camelCase: true
-dialect: postgres
-outFile: src/types/db.d.ts

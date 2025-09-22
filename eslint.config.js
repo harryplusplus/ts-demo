@@ -4,8 +4,8 @@ import ts from "typescript-eslint";
 
 export default defineConfig([
   {
-    files: ["apps/*/src/**/*.ts", "libs/*/src/**/*.ts"],
-    ignores: ["**/*.d.ts"],
+    files: ["apps/*/src/**/*.ts", "packages/*/src/**/*.ts"],
+    ignores: ["**/*.d.ts", "apps/api/src/migrations/**/*.ts"],
     plugins: { js, ts },
     extends: ["js/recommended", "ts/recommendedTypeChecked"],
     languageOptions: {
@@ -15,7 +15,7 @@ export default defineConfig([
       },
     },
     rules: {
-      "no-unused-vars": "off",
+      "no-unused-vars": "warn",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {

@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export class SignupBodyDto extends createZodDto(
   z.object({
-    email: z.email(),
+    email: z.email().meta({ example: "example@mail.com" }),
     password: z.string(),
   })
 ) {}

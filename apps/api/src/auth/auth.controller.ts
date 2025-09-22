@@ -1,4 +1,11 @@
-import { Body, Controller, Post, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
 import { ZodResponse } from "nestjs-zod";
 import {
   RefreshBodyDto,
@@ -17,9 +24,14 @@ import { LocalAuthGuard } from "./local-auth.guard";
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post("/signup")
+  @Post("/signup/:id")
   @Public()
-  async signup(@Body() body: SignupBodyDto) {
+  async signup(
+    @Param("id")
+    id: string,
+    @Query() query: SignupBodyDto,
+    @Body() body: SignupBodyDto
+  ) {
     return await this.authService.signup(body);
   }
 

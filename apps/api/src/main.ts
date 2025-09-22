@@ -9,12 +9,7 @@ import { setupGracefulShutdown } from "nestjs-graceful-shutdown";
 import { cleanupOpenApiDoc } from "nestjs-zod";
 
 async function bootstrap() {
-  const timezoneOffset = new Date().getTimezoneOffset();
-  if (timezoneOffset !== 0) {
-    throw new Error(
-      `TimeZone must be UTC. Current offset(hours): ${timezoneOffset / 60}`
-    );
-  }
+  checkUtc();
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
@@ -34,6 +29,17 @@ bootstrap().catch((e) => {
   console.error(e);
   process.exit(1);
 });
+
+function checkUtc() {
+  const offset = new Date().getTimezoneOffset();
+  if (offset === 0) {
+    return;
+  }
+
+  throw new Error(
+    `TimeZone must be UTC. Current offset(hours): ${offset / 60}`
+  );
+}
 
 async function setupSwagger(app: NestExpressApplication) {
   const { DocumentBuilder, SwaggerModule } = await import("@nestjs/swagger");

@@ -5,15 +5,15 @@
     "build": "nest build",
     "check-types": "tsc --noEmit",
     "dev": "TZ=UTC nest start -w --type-check",
-    "gen-types.db": "kysely-codegen",
     "gen-types.env": "node scripts/gen-types-env.mts",
-    "migrate": "node scripts/flyway.mts migrate",
-    "migrate.dev": "pnpm migrate && pnpm gen-types.db",
     "start": "TZ=UTC node dist/main.js"
   },
   "dependencies": {
-    "@nestjs-cls/transactional": "3.1.0",
-    "@nestjs-cls/transactional-adapter-kysely": "1.4.0",
+    "@mikro-orm/core": "6.5.5",
+    "@mikro-orm/migrations": "6.5.5",
+    "@mikro-orm/nestjs": "6.1.1",
+    "@mikro-orm/postgresql": "6.5.5",
+    "@mikro-orm/reflection": "6.5.5",
     "@nestjs/common": "11.1.6",
     "@nestjs/core": "11.1.6",
     "@nestjs/jwt": "11.0.0",
@@ -26,25 +26,20 @@
     "express": "5.1.0",
     "helmet": "8.1.0",
     "http-terminator": "3.2.0",
-    "kysely": "0.28.7",
-    "nestjs-cls": "6.0.1",
     "nestjs-graceful-shutdown": "1.0.3",
-    "nestjs-kysely": "3.1.1",
-    "nestjs-zod": "5.0.1",
     "passport": "0.7.0",
     "passport-jwt": "4.0.1",
     "passport-local": "1.0.0",
-    "pg": "8.16.3",
     "rxjs": "7.8.2",
-    "source-map-support": "0.5.21",
-    "zod": "4.1.9"
+    "source-map-support": "0.5.21"
   },
   "devDependencies": {
+    "@mikro-orm/cli": "6.5.5",
     "@ts-demo/paddle-task": "workspace:*",
     "@types/bcrypt": "6.0.0",
     "@types/express": "5.0.3",
     "@types/passport-jwt": "4.0.1",
     "@types/passport-local": "1.0.38",
-    "@types/pg": "8.15.5"
+    "ts-node": "10.9.2"
   }
 }
