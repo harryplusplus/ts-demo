@@ -14,7 +14,7 @@ import { User } from "./user.entity";
 @Index({ properties: ["user", "expiresAt", "deletedAt"] })
 export class RefreshToken {
   @PrimaryKey({ type: "bigint" })
-  id!: string & Opt;
+  id!: bigint & Opt;
 
   @Property({ type: "text", unique: true })
   token!: string;

@@ -4,7 +4,7 @@ import { Entity, Filter, Opt, PrimaryKey, Property } from "@mikro-orm/core";
 @Filter({ name: "softDelete", cond: { deletedAt: null }, default: true })
 export class User {
   @PrimaryKey({ type: "bigint" })
-  id!: string & Opt;
+  id!: bigint & Opt;
 
   @Property({ type: "uuid", unique: true })
   uuid: string & Opt = crypto.randomUUID();
