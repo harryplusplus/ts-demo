@@ -16,7 +16,7 @@ export class RefreshToken {
   @PrimaryKey({ type: "bigint" })
   id!: string & Opt;
 
-  @Property({ unique: true })
+  @Property({ type: "text", unique: true })
   token!: string;
 
   @Property({ nullable: true })

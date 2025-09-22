@@ -9,10 +9,10 @@ export class User {
   @Property({ type: "uuid", unique: true })
   uuid: string & Opt = crypto.randomUUID();
 
-  @Property({ unique: true })
+  @Property({ type: "text", unique: true })
   email!: string;
 
-  @Property()
+  @Property({ type: "text" })
   passwordHashed!: string;
 
   @Property()
