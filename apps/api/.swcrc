@@ -1,0 +1,12 @@
+{
+  "$schema": "https://swc.rs/schema.json",
+  "jsc": {
+    "target": "es2022",
+    "parser": {
+      "syntax": "typescript"
+    }
+  },
+  "module": {
+    "type": "es6"
+  }
+}

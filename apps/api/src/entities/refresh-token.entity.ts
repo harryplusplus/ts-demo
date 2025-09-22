@@ -6,7 +6,7 @@ import {
   PrimaryKey,
   Property,
 } from "@mikro-orm/core";
-import { User } from "./user.entity";
+import { User } from "./user.entity.js";
 
 @Entity()
 @Filter({ name: "softDelete", cond: { deletedAt: null }, default: true })
@@ -19,7 +19,7 @@ export class RefreshToken {
   token!: string;
 
   @Property({ type: "timestamptz", nullable: true })
-  expiresAt!: Date | null;
+  expiresAt?: Date;
 
   @Property({ type: "timestamptz" })
   createdAt!: Date;
@@ -31,7 +31,7 @@ export class RefreshToken {
   })
   updatedAt!: Date;
 
-  @Property({ type: "timestamptz" })
+  @Property({ type: "timestamptz", nullable: true })
   deletedAt?: Date;
 
   @ManyToOne(() => User)

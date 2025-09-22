@@ -1,11 +1,11 @@
 {
   "private": true,
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "build": "turbo build",
     "check-types": "turbo check-types",
     "lint": "eslint",
-    "package.json": "sort-package-json package.json apps/*/package.json packages/*/package.json"
+    "sort-package-json": "sort-package-json package.json apps/*/package.json packages/*/package.json"
   },
   "devDependencies": {
     "@eslint/js": "9.35.0",

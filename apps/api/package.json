@@ -1,6 +1,6 @@
 {
   "name": "@ts-demo/api",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "build": "nest build",
     "check-types": "tsc --noEmit",
@@ -27,11 +27,13 @@
     "helmet": "8.1.0",
     "http-terminator": "3.2.0",
     "nestjs-graceful-shutdown": "1.0.3",
+    "nestjs-zod": "5.0.1",
     "passport": "0.7.0",
     "passport-jwt": "4.0.1",
     "passport-local": "1.0.0",
     "rxjs": "7.8.2",
-    "source-map-support": "0.5.21"
+    "source-map-support": "0.5.21",
+    "zod": "4.1.11"
   },
   "devDependencies": {
     "@mikro-orm/cli": "6.5.5",

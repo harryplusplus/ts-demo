@@ -7,7 +7,7 @@ export class User {
   id!: string;
 
   @Property({ type: "uuid", unique: true })
-  uuid: string = crypto.randomUUID();
+  uuid!: string;
 
   @Property({ type: "text", unique: true })
   email!: string;
@@ -25,6 +25,6 @@ export class User {
   })
   updatedAt!: Date;
 
-  @Property({ type: "timestamptz" })
+  @Property({ type: "timestamptz", nullable: true })
   deletedAt?: Date;
 }

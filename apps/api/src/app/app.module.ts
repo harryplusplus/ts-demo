@@ -1,26 +1,31 @@
-// import { AuthModule } from "@/auth/auth.module";
-// import { JwtAccessAuthGuard } from "@/auth/jwt-access-auth.guard";
-import mikroOrmConfig from "@/mikro-orm.config";
-// import { RefreshTokensModule } from "@/refresh-tokens/refresh-tokens.module";
-// import { UsersModule } from "@/users/users.module";
+import { AuthModule } from "@/auth/auth.module.js";
+import { JwtAccessAuthGuard } from "@/auth/jwt-access-auth.guard.js";
+import mikroOrmConfig from "@/mikro-orm.config.js";
 import { MikroOrmModule } from "@mikro-orm/nestjs";
 import { Module } from "@nestjs/common";
-// import { APP_GUARD } from "@nestjs/core";
+import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
 import { GracefulShutdownModule } from "nestjs-graceful-shutdown";
+import { ZodSerializerInterceptor, ZodValidationPipe } from "nestjs-zod";
 
 @Module({
   imports: [
     GracefulShutdownModule.forRoot(),
     MikroOrmModule.forRoot(mikroOrmConfig),
-    // UsersModule,
-    // RefreshTokensModule,
-    // AuthModule,
+    AuthModule,
   ],
   providers: [
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: JwtAccessAuthGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAccessAuthGuard,
+    },
+    {
+      provide: APP_PIPE,
+      useClass: ZodValidationPipe,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ZodSerializerInterceptor,
+    },
   ],
 })
 export class AppModule {}
