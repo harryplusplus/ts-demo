@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export class SignDto extends createZodDto(
   z.object({
-    email: z.email(),
+    email: z.email().meta({ examples: ["user@mail.com"] }),
     password: z.string(),
   })
 ) {}
@@ -11,7 +11,7 @@ export class SignDto extends createZodDto(
 export class TokenResponseDto extends createZodDto(
   z.object({
     accessToken: z.string(),
-    refreshToken: z.string(),
+    refreshToken: z.string().optional(),
   })
 ) {}
 

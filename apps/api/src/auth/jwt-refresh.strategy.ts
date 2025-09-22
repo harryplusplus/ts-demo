@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { getJwtSecret } from "./auth-utils.js";
+import { JwtPayloadDto } from "./auth.dto.js";
 import { AuthService } from "./auth.service.js";
 
 export const JWT_REFRESH_STRATEGY = "jwt-refresh";
