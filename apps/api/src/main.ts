@@ -2,11 +2,11 @@ import "dotenv/config";
 import "source-map-support/register";
 
 import { AppModule } from "@/app/app.module";
+import { EntityManager } from "@mikro-orm/postgresql";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import helmet from "helmet";
 import { setupGracefulShutdown } from "nestjs-graceful-shutdown";
-import { cleanupOpenApiDoc } from "nestjs-zod";
 
 async function bootstrap() {
   checkUtc();
@@ -22,7 +22,9 @@ async function bootstrap() {
     await setupSwagger(app);
   }
 
-  await app.listen(3000);
+  const em = app.get(EntityManager);
+  console.log();
+  // await app.listen(3000);
 }
 
 bootstrap().catch((e) => {
@@ -49,25 +51,23 @@ async function setupSwagger(app: NestExpressApplication) {
     "/api",
     app,
     () =>
-      cleanupOpenApiDoc(
-        SwaggerModule.createDocument(
-          app,
-          new DocumentBuilder()
-            .setTitle("TypeScript Demo API")
-            .setVersion("1.0")
-            .setOpenAPIVersion("3.1.1")
-            .addBearerAuth(
-              {
-                type: "http",
-                scheme: "Bearer",
-                bearerFormat: "JWT",
-                in: "header",
-                name: "Authorization",
-              },
-              "token"
-            )
-            .build()
-        )
+      SwaggerModule.createDocument(
+        app,
+        new DocumentBuilder()
+          .setTitle("TypeScript Demo API")
+          .setVersion("1.0")
+          .setOpenAPIVersion("3.1.1")
+          .addBearerAuth(
+            {
+              type: "http",
+              scheme: "Bearer",
+              bearerFormat: "JWT",
+              in: "header",
+              name: "Authorization",
+            },
+            "access-token"
+          )
+          .build()
       ),
     {
       swaggerOptions: {

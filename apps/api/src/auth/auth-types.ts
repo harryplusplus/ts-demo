@@ -1,48 +1,48 @@
-import { createZodDto } from "nestjs-zod";
-import { z } from "zod";
+// import { createZodDto } from "nestjs-zod";
+// import { z } from "zod";
 
-export class SignupBodyDto extends createZodDto(
-  z.object({
-    email: z.email().meta({ example: "example@mail.com" }),
-    password: z.string(),
-  })
-) {}
+// export class SignupBodyDto extends createZodDto(
+//   z.object({
+//     email: z.email().meta({ example: "example@mail.com" }),
+//     password: z.string(),
+//   })
+// ) {}
 
-export class SigninBodyDto extends createZodDto(
-  z.object({
-    email: z.email(),
-    password: z.string(),
-  })
-) {}
+// export class SigninBodyDto extends createZodDto(
+//   z.object({
+//     email: z.email(),
+//     password: z.string(),
+//   })
+// ) {}
 
-export class SigninResponseDto extends createZodDto(
-  z.object({
-    accessToken: z.string(),
-    refreshToken: z.optional(z.string()),
-  })
-) {}
+// export class SigninResponseDto extends createZodDto(
+//   z.object({
+//     accessToken: z.string(),
+//     refreshToken: z.optional(z.string()),
+//   })
+// ) {}
 
-export class RefreshResponseDto extends createZodDto(
-  z.object({
-    accessToken: z.string(),
-    refreshToken: z.optional(z.string()),
-  })
-) {}
+// export class RefreshResponseDto extends createZodDto(
+//   z.object({
+//     accessToken: z.string(),
+//     refreshToken: z.optional(z.string()),
+//   })
+// ) {}
 
-export type User = {
-  id: string;
-  uuid: string;
-};
+// export type User = {
+//   id: string;
+//   uuid: string;
+// };
 
-export class RefreshBodyDto extends createZodDto(
-  z.object({
-    refreshToken: z.string(),
-  })
-) {}
+// export class RefreshBodyDto extends createZodDto(
+//   z.object({
+//     refreshToken: z.string(),
+//   })
+// ) {}
 
-export class JwtPayloadDto extends createZodDto(
-  z.object({
-    sub: z.string(),
-    iat: z.number(),
-  })
-) {}
+// export class JwtPayloadDto extends createZodDto(
+//   z.object({
+//     sub: z.string(),
+//     iat: z.number(),
+//   })
+// ) {}

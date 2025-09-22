@@ -1,6 +1,7 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, Filter, PrimaryKey, Property } from "@mikro-orm/core";
 
 @Entity()
+@Filter({ name: "softDelete", cond: { deletedAt: null }, default: true })
 export class User {
   @PrimaryKey({ type: "bigint" })
   id!: string;
@@ -8,6 +9,22 @@ export class User {
   @Property({ type: "uuid", unique: true })
   uuid: string = crypto.randomUUID();
 
-  // @Property({ type: "text" })
-  // email!: string;
+  @Property({ type: "text", unique: true })
+  email!: string;
+
+  @Property({ type: "text" })
+  passwordHashed!: string;
+
+  @Property({ type: "timestamptz", defaultRaw: "now()" })
+  createdAt!: Date;
+
+  @Property({
+    type: "timestamptz",
+    defaultRaw: "now()",
+    onUpdate: () => new Date(),
+  })
+  updatedAt!: Date;
+
+  @Property({ type: "timestamptz" })
+  deletedAt?: Date;
 }
