@@ -9,18 +9,18 @@ export class User {
   @Property({ type: "uuid", unique: true })
   uuid: string & Opt = crypto.randomUUID();
 
-  @Property({ type: "text", unique: true })
+  @Property({ unique: true })
   email!: string;
 
-  @Property({ type: "text" })
+  @Property()
   passwordHashed!: string;
 
-  @Property({ type: "timestamptz" })
+  @Property()
   createdAt: Date & Opt = new Date();
 
-  @Property({ type: "timestamptz", onUpdate: () => new Date() })
+  @Property({ onUpdate: () => new Date() })
   updatedAt: Date & Opt = new Date();
 
-  @Property({ type: "timestamptz", nullable: true })
+  @Property({ nullable: true })
   deletedAt?: Date;
 }

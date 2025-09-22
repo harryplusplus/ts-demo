@@ -16,19 +16,19 @@ export class RefreshToken {
   @PrimaryKey({ type: "bigint" })
   id!: string & Opt;
 
-  @Property({ type: "text", unique: true })
+  @Property({ unique: true })
   token!: string;
 
-  @Property({ type: "timestamptz", nullable: true })
+  @Property({ nullable: true })
   expiresAt?: Date;
 
-  @Property({ type: "timestamptz" })
+  @Property()
   createdAt!: Date;
 
-  @Property({ type: "timestamptz", onUpdate: () => new Date() })
+  @Property({ onUpdate: () => new Date() })
   updatedAt: Date & Opt = new Date();
 
-  @Property({ type: "timestamptz", nullable: true })
+  @Property({ nullable: true })
   deletedAt?: Date;
 
   @ManyToOne(() => User)
