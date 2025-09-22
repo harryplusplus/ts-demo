@@ -1,4 +1,5 @@
 import {
+  BigIntType,
   Entity,
   Filter,
   Index,
@@ -13,7 +14,7 @@ import { User } from "./user.entity";
 @Filter({ name: "softDelete", cond: { deletedAt: null }, default: true })
 @Index({ properties: ["user", "expiresAt", "deletedAt"] })
 export class RefreshToken {
-  @PrimaryKey({ type: "bigint" })
+  @PrimaryKey({ type: new BigIntType("string") })
   id!: string & Opt;
 
   @Property({ type: "text", unique: true })

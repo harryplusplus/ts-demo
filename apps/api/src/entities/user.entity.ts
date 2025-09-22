@@ -1,9 +1,16 @@
-import { Entity, Filter, Opt, PrimaryKey, Property } from "@mikro-orm/core";
+import {
+  BigIntType,
+  Entity,
+  Filter,
+  Opt,
+  PrimaryKey,
+  Property,
+} from "@mikro-orm/core";
 
 @Entity()
 @Filter({ name: "softDelete", cond: { deletedAt: null }, default: true })
 export class User {
-  @PrimaryKey({ type: "bigint" })
+  @PrimaryKey({ type: new BigIntType("string") })
   id!: string & Opt;
 
   @Property({ type: "uuid", unique: true })
