@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { getJwtSecret } from "./auth-utils";
-import { JwtPayloadDto } from "./auth.dto";
+import { InvalidRefreshTokenErrorDto, JwtPayloadDto } from "./auth.dto";
 import { AuthService } from "./auth.service";
 
 export const JWT_REFRESH_STRATEGY = "jwt-refresh";
@@ -21,7 +21,12 @@ export class JwtRefreshStrategy extends PassportStrategy(
   }
 
   async validate(rawPayload: unknown) {
-    const payload = JwtPayloadDto.schema.parse(rawPayload);
+    const payload = await Promise.resolve()
+      .then(() => JwtPayloadDto.schema.parse(rawPayload))
+      .catch(() => {
+        throw new UnauthorizedException(new InvalidRefreshTokenErrorDto());
+      });
+
     return await this.authService.parseJwtPayload(payload);
   }
 }

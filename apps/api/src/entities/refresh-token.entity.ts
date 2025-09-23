@@ -1,4 +1,4 @@
-import { createReference, ReferenceSource } from "@/types/mikro-utils";
+import { createReference, ReferenceSource } from "@/mikro-utils";
 import {
   BigIntType,
   Entity,

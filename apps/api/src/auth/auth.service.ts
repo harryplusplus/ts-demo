@@ -1,7 +1,12 @@
 import { RefreshToken } from "@/entities/refresh-token.entity";
 import { User } from "@/entities/user.entity";
-import { EntityManager, Transactional } from "@mikro-orm/postgresql";
 import {
+  EntityManager,
+  Transactional,
+  UniqueConstraintViolationException,
+} from "@mikro-orm/postgresql";
+import {
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -9,7 +14,16 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import { addDays } from "date-fns";
 import { AuthJwtService } from "./auth-jwt.service";
-import { JwtPayloadDto, RefreshDto, SignDto } from "./auth.dto";
+import {
+  EmailExistsErrorDto,
+  InvalidEmailErrorDto,
+  InvalidPasswordErrorDto,
+  InvalidUserErrorDto,
+  JwtPayloadDto,
+  RefreshDto,
+  RefreshTokenNotFoundErrorDto,
+  SignInfoDto,
+} from "./auth.dto";
 import { PasswordHashService } from "./password-hash.service";
 
 @Injectable()
@@ -21,13 +35,27 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) {}
 
-  async signup(input: SignDto) {
-    const { email, password } = input;
+  async signup(dto: SignInfoDto) {
+    const { email, password } = dto;
     const passwordHashed = await this.passwordHashService.hash({
       password,
     });
     const user = new User({ email, passwordHashed });
-    await this.em.persist(user).flush();
+    this.em.persist(user);
+    try {
+      await this.em.flush();
+    } catch (e) {
+      if (
+        e instanceof UniqueConstraintViolationException &&
+        e.code === "23505" &&
+        "constraint" in e &&
+        e.constraint === "user_email_unique"
+      ) {
+        throw new ConflictException(new EmailExistsErrorDto());
+      }
+
+      throw e;
+    }
   }
 
   @Transactional()
@@ -50,11 +78,11 @@ export class AuthService {
     };
   }
 
-  async findUserByEmailAndPassword(input: { email: string; password: string }) {
-    const { email, password } = input;
+  async findUserByEmailAndPassword(dto: { email: string; password: string }) {
+    const { email, password } = dto;
     const user = await this.em.findOne(User, { email });
     if (!user) {
-      throw new UnauthorizedException("Invalid email.");
+      throw new UnauthorizedException(new InvalidEmailErrorDto());
     }
 
     if (
@@ -63,7 +91,7 @@ export class AuthService {
         passwordHashed: user.passwordHashed,
       }))
     ) {
-      throw new UnauthorizedException("Invalid password.");
+      throw new UnauthorizedException(new InvalidPasswordErrorDto());
     }
 
     return user;
@@ -73,7 +101,7 @@ export class AuthService {
     const { sub } = dto;
     const user = await this.em.findOne(User, { uuid: sub });
     if (!user) {
-      throw new UnauthorizedException("Invalid access token.");
+      throw new UnauthorizedException(new InvalidUserErrorDto());
     }
 
     return user;
@@ -88,7 +116,7 @@ export class AuthService {
       { deletedAt: new Date() }
     );
     if (count === 0) {
-      throw new NotFoundException("Refresh token not found.");
+      throw new NotFoundException(new RefreshTokenNotFoundErrorDto());
     }
     const res = await this.createTokens({ user });
     return {
