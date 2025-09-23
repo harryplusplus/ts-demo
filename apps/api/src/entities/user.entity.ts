@@ -17,10 +17,10 @@ export class User {
   uuid: string & Opt = crypto.randomUUID();
 
   @Property({ type: "text", unique: true })
-  email!: string;
+  email: string;
 
   @Property({ type: "text" })
-  passwordHashed!: string;
+  passwordHashed: string;
 
   @Property()
   createdAt: Date & Opt = new Date();
@@ -30,4 +30,9 @@ export class User {
 
   @Property({ nullable: true })
   deletedAt?: Date;
+
+  constructor(dto: { email: string; passwordHashed: string }) {
+    this.email = dto.email;
+    this.passwordHashed = dto.passwordHashed;
+  }
 }

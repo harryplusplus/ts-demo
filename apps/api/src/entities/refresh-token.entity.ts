@@ -1,3 +1,4 @@
+import { createReference, ReferenceSource } from "@/types/mikro-utils";
 import {
   BigIntType,
   Entity,
@@ -7,7 +8,6 @@ import {
   Opt,
   PrimaryKey,
   Property,
-  ref,
   type Ref,
 } from "@mikro-orm/core";
 import { User } from "./user.entity";
@@ -20,13 +20,13 @@ export class RefreshToken {
   id?: string & Opt;
 
   @Property({ type: "text", unique: true })
-  token!: string;
+  token: string;
 
   @Property({ nullable: true })
   expiresAt?: Date;
 
   @Property()
-  createdAt!: Date;
+  createdAt: Date;
 
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date & Opt = new Date();
@@ -35,9 +35,15 @@ export class RefreshToken {
   deletedAt?: Date;
 
   @ManyToOne(() => User, { ref: true })
-  user!: Ref<User>;
+  user: Ref<User>;
 
-  constructor(user: User) {
-    this.user = ref(user);
+  constructor(dto: {
+    token: string;
+    createdAt: Date;
+    user: ReferenceSource<User>;
+  }) {
+    this.token = dto.token;
+    this.createdAt = dto.createdAt;
+    this.user = createReference(User, dto.user);
   }
 }
