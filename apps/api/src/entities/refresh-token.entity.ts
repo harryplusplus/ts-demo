@@ -5,7 +5,6 @@ import {
   Filter,
   Index,
   ManyToOne,
-  Opt,
   PrimaryKey,
   Property,
   type Ref,
@@ -17,21 +16,21 @@ import { User } from "./user.entity";
 @Index({ properties: ["user", "expiresAt", "deletedAt"] })
 export class RefreshToken {
   @PrimaryKey({ type: new BigIntType("string") })
-  id?: string & Opt;
+  id?: string;
 
   @Property({ type: "text", unique: true })
   token: string;
 
-  @Property({ nullable: true })
+  @Property({ type: "timestamptz", nullable: true })
   expiresAt?: Date;
 
-  @Property()
+  @Property({ type: "timestamptz" })
   createdAt: Date;
 
-  @Property({ onUpdate: () => new Date() })
-  updatedAt: Date & Opt = new Date();
+  @Property({ type: "timestamptz", onUpdate: () => new Date() })
+  updatedAt: Date = new Date();
 
-  @Property({ nullable: true })
+  @Property({ type: "timestamptz", nullable: true })
   deletedAt?: Date;
 
   @ManyToOne(() => User, { ref: true })
@@ -39,10 +38,14 @@ export class RefreshToken {
 
   constructor(dto: {
     token: string;
+    expiresAt?: Date;
     createdAt: Date;
     user: ReferenceSource<User>;
   }) {
     this.token = dto.token;
+    if (dto.expiresAt) {
+      this.expiresAt = dto.expiresAt;
+    }
     this.createdAt = dto.createdAt;
     this.user = createReference(User, dto.user);
   }

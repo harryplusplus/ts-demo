@@ -26,7 +26,7 @@ export class AuthService {
     const passwordHashed = await this.passwordHashService.hash({
       password,
     });
-    const user = this.em.create(User, { email, passwordHashed });
+    const user = new User({ email, passwordHashed });
     await this.em.persist(user).flush();
   }
 
@@ -106,7 +106,7 @@ export class AuthService {
       this.jwtService.decode(refreshTokenString)
     );
     const issuedAt = new Date(decoded.iat * 1000);
-    const refreshToken = this.em.create(RefreshToken, {
+    const refreshToken = new RefreshToken({
       user,
       token: refreshTokenString,
       expiresAt: addDays(issuedAt, 7),
