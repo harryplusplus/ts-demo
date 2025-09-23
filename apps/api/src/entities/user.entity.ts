@@ -11,7 +11,7 @@ import {
 @Filter({ name: "softDelete", cond: { deletedAt: null }, default: true })
 export class User {
   @PrimaryKey({ type: new BigIntType("string") })
-  id!: string & Opt;
+  id?: string & Opt;
 
   @Property({ type: "uuid", unique: true })
   uuid: string & Opt = crypto.randomUUID();

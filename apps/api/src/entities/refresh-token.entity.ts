@@ -7,6 +7,8 @@ import {
   Opt,
   PrimaryKey,
   Property,
+  ref,
+  type Ref,
 } from "@mikro-orm/core";
 import { User } from "./user.entity";
 
@@ -15,7 +17,7 @@ import { User } from "./user.entity";
 @Index({ properties: ["user", "expiresAt", "deletedAt"] })
 export class RefreshToken {
   @PrimaryKey({ type: new BigIntType("string") })
-  id!: string & Opt;
+  id?: string & Opt;
 
   @Property({ type: "text", unique: true })
   token!: string;
@@ -32,6 +34,10 @@ export class RefreshToken {
   @Property({ nullable: true })
   deletedAt?: Date;
 
-  @ManyToOne(() => User)
-  user!: User;
+  @ManyToOne(() => User, { ref: true })
+  user!: Ref<User>;
+
+  constructor(user: User) {
+    this.user = ref(user);
+  }
 }
