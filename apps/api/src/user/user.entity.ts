@@ -1,3 +1,4 @@
+import { Required } from "@/types/required";
 import {
   Column,
   CreateDateColumn,
@@ -16,10 +17,10 @@ export class User {
   uuid: string = crypto.randomUUID();
 
   @Column({ type: "text", unique: true })
-  email!: string;
+  email!: string & Required;
 
   @Column({ type: "text" })
-  passwordHashed!: string;
+  passwordHashed!: string & Required;
 
   @CreateDateColumn({ type: "timestamptz" })
   createdAt!: Date;
@@ -28,5 +29,5 @@ export class User {
   updatedAt!: Date;
 
   @DeleteDateColumn({ type: "timestamptz" })
-  deletedAt: Date | null = null;
+  deletedAt!: Date | null;
 }

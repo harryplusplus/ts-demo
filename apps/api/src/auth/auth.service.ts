@@ -40,7 +40,10 @@ export class AuthService {
       password,
     });
     try {
-      await this.userRepository.createEntity({ email, passwordHashed });
+      await this.userRepository.createOneFromRequiredOnly({
+        email,
+        passwordHashed,
+      });
     } catch (e) {
       if (
         e instanceof QueryFailedError &&
@@ -134,11 +137,12 @@ export class AuthService {
       this.jwtService.decode(refreshTokenString)
     );
     const issuedAt = new Date(decoded.iat * 1000);
-    const refreshToken = await this.refreshTokenRepository.createEntity({
-      userId: user.id,
-      token: refreshTokenString,
-      expiresAt: addDays(issuedAt, 7),
-    });
+    const refreshToken =
+      await this.refreshTokenRepository.createOneFromRequiredOnly({
+        userId: user.id,
+        token: refreshTokenString,
+        expiresAt: addDays(issuedAt, 7),
+      });
     const accessToken = await this.authJwtService.createAccessToken({
       userUuid: user.uuid,
     });

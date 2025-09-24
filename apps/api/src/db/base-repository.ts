@@ -1,38 +1,35 @@
 import {
-  DataSource,
-  DeepPartial,
-  EntityTarget,
-  ObjectLiteral,
-  Repository,
-} from "typeorm";
+  createManyFromRequiredIncludes,
+  createManyFromRequiredOnly,
+  createOneFromRequiredIncludes,
+  createOneFromRequiredOnly,
+  RequiredIncludes,
+  RequiredOnly,
+} from "@/types/required";
+import { DataSource, EntityTarget, ObjectLiteral, Repository } from "typeorm";
 
 export class BaseRepository<
-  Entity extends ObjectLiteral,
-  CreateEntityInput extends DeepPartial<Entity>
+  Entity extends ObjectLiteral
 > extends Repository<Entity> {
   constructor(target: EntityTarget<Entity>, dataSource: DataSource) {
     super(target, dataSource.createEntityManager());
   }
 
-  async createEntity(input: CreateEntityInput) {
-    const entities = await this.createEntities([input]);
-    const entity = entities[0];
-    if (!entity) {
-      throw new Error("Entity must exists.");
-    }
-    return entity;
+  async createOneFromRequiredIncludes(entityLike: RequiredIncludes<Entity>) {
+    return await createOneFromRequiredIncludes(this, entityLike);
   }
 
-  async createEntities(inputs: CreateEntityInput[]) {
-    const entities = inputs.map((x) => this.create(x));
-    const res = await this.insert(entities);
-    if (entities.length !== res.generatedMaps.length) {
-      throw new Error(
-        `Entity creation failed. entities.length(${entities.length}) != generatedMaps.length(${res.generatedMaps.length})`
-      );
-    }
-    return entities.map((x, i) =>
-      this.merge(x, (res.generatedMaps[i] ?? {}) as DeepPartial<Entity>)
-    );
+  async createManyFromRequiredIncludes(
+    entityLikes: RequiredIncludes<Entity>[]
+  ) {
+    return await createManyFromRequiredIncludes(this, entityLikes);
+  }
+
+  async createOneFromRequiredOnly(entityLike: RequiredOnly<Entity>) {
+    return await createOneFromRequiredOnly(this, entityLike);
+  }
+
+  async createManyFromRequiredOnly(entityLikes: RequiredOnly<Entity>[]) {
+    return await createManyFromRequiredOnly(this, entityLikes);
   }
 }

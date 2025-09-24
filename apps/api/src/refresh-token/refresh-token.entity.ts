@@ -1,3 +1,4 @@
+import { Required } from "@/types/required";
 import { User } from "@/user/user.entity";
 import {
   Column,
@@ -17,10 +18,10 @@ export class RefreshToken {
   id!: string;
 
   @Column({ type: "text", unique: true })
-  token!: string;
+  token!: string & Required;
 
   @Column({ type: "timestamptz", nullable: true })
-  expiresAt: Date | null = null;
+  expiresAt!: (Date | null) & Required;
 
   @CreateDateColumn({ type: "timestamptz" })
   createdAt!: Date;
@@ -29,10 +30,10 @@ export class RefreshToken {
   updatedAt!: Date;
 
   @DeleteDateColumn({ type: "timestamptz" })
-  deletedAt: Date | null = null;
+  deletedAt!: Date | null;
 
   @Column({ type: "bigint" })
-  userId!: string;
+  userId!: string & Required;
 
   @ManyToOne(() => User)
   user?: User;
