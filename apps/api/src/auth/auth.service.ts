@@ -9,7 +9,7 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { addDays } from "date-fns";
-import { QueryFailedError } from "typeorm";
+import { IsNull, MoreThan, Or, QueryFailedError } from "typeorm";
 import { Transactional } from "typeorm-transactional";
 import { AuthJwtService } from "./auth-jwt.service";
 import {
@@ -60,6 +60,7 @@ export class AuthService {
   async signin(user: User) {
     const refreshToken = await this.refreshTokenRepository.findOneBy({
       userId: user.id,
+      expiresAt: Or(IsNull(), MoreThan(new Date())),
     });
 
     // NOTE: 데모에서는 단일 리프레시 토큰만 사용함.
