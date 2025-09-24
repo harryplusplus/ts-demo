@@ -35,5 +35,5 @@ export class RefreshToken {
   userId!: string;
 
   @ManyToOne(() => User)
-  user!: User;
+  user?: User;
 }
