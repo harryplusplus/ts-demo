@@ -7,9 +7,19 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import helmet from "helmet";
 import { setupGracefulShutdown } from "nestjs-graceful-shutdown";
 import { cleanupOpenApiDoc } from "nestjs-zod";
+import {
+  initializeTransactionalContext,
+  StorageDriver,
+} from "typeorm-transactional";
+
+bootstrap().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
 
 async function bootstrap() {
   checkUtc();
+  initializeTransactionalContext({ storageDriver: StorageDriver.AUTO });
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
@@ -24,11 +34,6 @@ async function bootstrap() {
 
   await app.listen(3000);
 }
-
-bootstrap().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
 
 function checkUtc() {
   const offset = new Date().getTimezoneOffset();

@@ -1,10 +1,6 @@
-import { RefreshToken } from "@/entities/refresh-token.entity";
-import { User } from "@/entities/user.entity";
-import {
-  EntityManager,
-  Transactional,
-  UniqueConstraintViolationException,
-} from "@mikro-orm/postgresql";
+import { RefreshTokenRepository } from "@/refresh-token/refresh-token.repository";
+import { User } from "@/user/user.entity";
+import { UserRepository } from "@/user/user.repository";
 import {
   ConflictException,
   Injectable,
@@ -13,43 +9,45 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { addDays } from "date-fns";
+import { QueryFailedError } from "typeorm";
+import { Transactional } from "typeorm-transactional";
 import { AuthJwtService } from "./auth-jwt.service";
 import {
   EmailExistsErrorDto,
+  EmailSigninDto,
   InvalidEmailErrorDto,
   InvalidPasswordErrorDto,
   InvalidUserErrorDto,
   JwtPayloadDto,
   RefreshDto,
   RefreshTokenNotFoundErrorDto,
-  SignInfoDto,
 } from "./auth.dto";
 import { PasswordHashService } from "./password-hash.service";
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly em: EntityManager,
     private readonly authJwtService: AuthJwtService,
     private readonly passwordHashService: PasswordHashService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly userRepository: UserRepository,
+    private readonly refreshTokenRepository: RefreshTokenRepository
   ) {}
 
-  async signup(dto: SignInfoDto) {
+  async signup(dto: EmailSigninDto) {
     const { email, password } = dto;
     const passwordHashed = await this.passwordHashService.hash({
       password,
     });
-    const user = new User({ email, passwordHashed });
-    this.em.persist(user);
     try {
-      await this.em.flush();
+      await this.userRepository.createEntity({ email, passwordHashed });
     } catch (e) {
       if (
-        e instanceof UniqueConstraintViolationException &&
+        e instanceof QueryFailedError &&
+        "code" in e &&
         e.code === "23505" &&
         "constraint" in e &&
-        e.constraint === "user_email_unique"
+        e.constraint === "uq_users_email"
       ) {
         throw new ConflictException(new EmailExistsErrorDto());
       }
@@ -60,7 +58,9 @@ export class AuthService {
 
   @Transactional()
   async signin(user: User) {
-    const refreshToken = await this.em.findOne(RefreshToken, { user });
+    const refreshToken = await this.refreshTokenRepository.findOneBy({
+      userId: user.id,
+    });
 
     // NOTE: 데모에서는 단일 리프레시 토큰만 사용함.
     if (refreshToken) {
@@ -78,9 +78,9 @@ export class AuthService {
     };
   }
 
-  async findUserByEmailAndPassword(dto: { email: string; password: string }) {
+  async parseEmailAndPassword(dto: EmailSigninDto) {
     const { email, password } = dto;
-    const user = await this.em.findOne(User, { email });
+    const user = await this.userRepository.findOneBy({ email });
     if (!user) {
       throw new UnauthorizedException(new InvalidEmailErrorDto());
     }
@@ -99,7 +99,7 @@ export class AuthService {
 
   async parseJwtPayload(dto: JwtPayloadDto) {
     const { sub } = dto;
-    const user = await this.em.findOne(User, { uuid: sub });
+    const user = await this.userRepository.findOneBy({ uuid: sub });
     if (!user) {
       throw new UnauthorizedException(new InvalidUserErrorDto());
     }
@@ -110,18 +110,17 @@ export class AuthService {
   @Transactional()
   async refresh(input: { user: User; dto: RefreshDto }) {
     const { user, dto } = input;
-    const count = await this.em.nativeUpdate(
-      RefreshToken,
-      { token: dto.refreshToken, deletedAt: null },
-      { deletedAt: new Date() }
-    );
-    if (count === 0) {
+    const deleteRes = await this.refreshTokenRepository.softDelete({
+      token: dto.refreshToken,
+    });
+    if (deleteRes.affected !== 1) {
       throw new NotFoundException(new RefreshTokenNotFoundErrorDto());
     }
-    const res = await this.createTokens({ user });
+
+    const createRes = await this.createTokens({ user });
     return {
-      accessToken: res.accessToken,
-      refreshToken: res.refreshToken.token,
+      accessToken: createRes.accessToken,
+      refreshToken: createRes.refreshToken.token,
     };
   }
 
@@ -134,13 +133,11 @@ export class AuthService {
       this.jwtService.decode(refreshTokenString)
     );
     const issuedAt = new Date(decoded.iat * 1000);
-    const refreshToken = new RefreshToken({
-      user,
+    const refreshToken = await this.refreshTokenRepository.createEntity({
+      userId: user.id,
       token: refreshTokenString,
       expiresAt: addDays(issuedAt, 7),
-      createdAt: issuedAt,
     });
-    this.em.persist(refreshToken);
     const accessToken = await this.authJwtService.createAccessToken({
       userUuid: user.uuid,
     });

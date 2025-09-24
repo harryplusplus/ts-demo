@@ -2,7 +2,7 @@ import { ResultError } from "@/error.dto";
 import { createZodDto } from "nestjs-zod";
 import z from "zod";
 
-export class SignInfoDto extends createZodDto(
+export class EmailSigninDto extends createZodDto(
   z.object({
     email: z.email().meta({ example: "user@email.com" }),
     password: z.string(),

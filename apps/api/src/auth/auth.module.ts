@@ -1,3 +1,5 @@
+import { RefreshTokenModule } from "@/refresh-token/refresh-token.module";
+import { UserModule } from "@/user/user.module";
 import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
@@ -19,6 +21,8 @@ import { PasswordHashService } from "./password-hash.service";
       },
     }),
     PassportModule,
+    UserModule,
+    RefreshTokenModule,
   ],
   controllers: [AuthController],
   providers: [

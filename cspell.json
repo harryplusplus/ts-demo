@@ -3,5 +3,5 @@
     "typescript": true
   },
   "ignorePaths": [],
-  "words": ["mikro", "timestamptz"]
+  "words": ["timestamptz"]
 }

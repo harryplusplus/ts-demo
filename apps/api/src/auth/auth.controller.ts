@@ -1,4 +1,4 @@
-import { User } from "@/entities/user.entity";
+import { User } from "@/user/user.entity";
 import { Body, Controller, Post, UseGuards } from "@nestjs/common";
 import {
   ApiBody,
@@ -12,13 +12,13 @@ import { ZodResponse } from "nestjs-zod";
 import { CurrentUser, Public } from "./auth-utils";
 import {
   EmailExistsErrorDto,
+  EmailSigninDto,
   InvalidEmailErrorDto,
   InvalidPasswordErrorDto,
   InvalidRefreshTokenErrorDto,
   InvalidUserErrorDto,
   RefreshDto,
   RefreshTokenNotFoundErrorDto,
-  SignInfoDto,
   TokenResponseDto,
 } from "./auth.dto";
 import { AuthService } from "./auth.service";
@@ -37,13 +37,13 @@ export class AuthController {
     type: EmailExistsErrorDto,
   })
   @Public()
-  async signup(@Body() dto: SignInfoDto) {
+  async signup(@Body() dto: EmailSigninDto) {
     return await this.authService.signup(dto);
   }
 
   @Post("/signin")
   @ApiOperation({ summary: "로그인" })
-  @ApiBody({ type: SignInfoDto })
+  @ApiBody({ type: EmailSigninDto })
   @ApiUnauthorizedResponse({
     description: "인증 실패",
     examples: {

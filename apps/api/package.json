@@ -7,22 +7,18 @@
     "debug": "TZ=UTC nest start -w",
     "dev": "TZ=UTC nest start -w --type-check",
     "gen-types.env": "node scripts/gen-types-env.mts",
-    "migration:create": "pnpm build && mikro-orm migration:create",
-    "migration:up": "mikro-orm migration:up",
+    "migration:gen": "TZ=UTC node scripts/gen-migration.mts",
+    "migration:run": "pnpm turbo build && TZ=UTC typeorm migration:run -d dist/db/migration-datasource.js",
     "start": "TZ=UTC node dist/main.js"
   },
   "dependencies": {
-    "@mikro-orm/core": "6.5.5",
-    "@mikro-orm/migrations": "6.5.5",
-    "@mikro-orm/nestjs": "6.1.1",
-    "@mikro-orm/postgresql": "6.5.5",
-    "@mikro-orm/reflection": "6.5.5",
     "@nestjs/common": "11.1.6",
     "@nestjs/core": "11.1.6",
     "@nestjs/jwt": "11.0.0",
     "@nestjs/passport": "11.0.5",
     "@nestjs/platform-express": "11.1.6",
     "@nestjs/swagger": "11.2.0",
+    "@nestjs/typeorm": "11.0.0",
     "bcrypt": "6.0.0",
     "date-fns": "4.1.0",
     "dotenv": "17.2.2",
@@ -34,17 +30,19 @@
     "passport": "0.7.0",
     "passport-jwt": "4.0.1",
     "passport-local": "1.0.0",
+    "pg": "8.16.3",
     "rxjs": "7.8.2",
     "source-map-support": "0.5.21",
+    "typeorm": "0.3.27",
+    "typeorm-transactional": "0.5.0",
     "zod": "4.1.11"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "6.5.5",
     "@ts-demo/paddle-task": "workspace:*",
     "@types/bcrypt": "6.0.0",
     "@types/express": "5.0.3",
     "@types/passport-jwt": "4.0.1",
     "@types/passport-local": "1.0.38",
-    "ts-node": "10.9.2"
+    "@types/pg": "8.15.5"
   }
 }
