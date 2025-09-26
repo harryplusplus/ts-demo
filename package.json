@@ -5,7 +5,8 @@
     "build": "turbo build",
     "check-types": "turbo check-types",
     "lint": "eslint",
-    "sort-package-json": "sort-package-json package.json apps/*/package.json packages/*/package.json"
+    "sort-package-json": "sort-package-json package.json apps/*/package.json packages/*/package.json",
+    "test": "turbo test"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.3.10",
