@@ -7,6 +7,7 @@ declare module "process" {
   global {
     namespace NodeJS {
       interface ProcessEnv {
+        TZ?: string;
         NODE_ENV?: string;
         DATABASE_URL?: string;
         JWT_SECRET?: string;

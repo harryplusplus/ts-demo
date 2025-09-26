@@ -2,12 +2,12 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
 import { addTransactionalDataSource } from "typeorm-transactional";
-import { dataSourceOptions } from "./data-source-options";
+import { getAppConfig } from "./config";
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      useFactory: () => ({ ...dataSourceOptions }),
+      useFactory: () => ({ ...getAppConfig() }),
       async dataSourceFactory(options) {
         if (!options) {
           throw new Error("Invalid options.");

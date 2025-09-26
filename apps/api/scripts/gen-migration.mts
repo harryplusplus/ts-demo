@@ -9,6 +9,6 @@ if (!arg0) {
 }
 
 execSync(
-  `pnpm turbo build && pnpm typeorm migration:generate src/migrations/${arg0} -p -d dist/db/migration-datasource.js`,
+  `pnpm typeorm-ts-node-commonjs migration:generate src/migrations/${arg0} -p -d src/db/migration-datasource.ts`,
   { stdio: "inherit" }
 );

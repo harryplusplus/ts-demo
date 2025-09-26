@@ -4,14 +4,16 @@
   "scripts": {
     "build": "nest build",
     "check-types": "tsc --noEmit",
-    "debug": "TZ=UTC nest start -w",
-    "dev": "TZ=UTC nest start -w --type-check",
+    "debug": "nodemon -w src -e ts -x dotenvx run -- ts-node src/main.ts",
+    "dev": "dotenvx run -- nest start -w --type-check",
     "gen-types.env": "node scripts/gen-types-env.mts",
-    "migration:gen": "TZ=UTC node scripts/gen-migration.mts",
-    "migration:run": "pnpm turbo build && TZ=UTC typeorm migration:run -d dist/db/migration-datasource.js",
-    "start": "TZ=UTC node dist/main.js"
+    "migration:gen": "dotenvx run -- node scripts/gen-migration.mts",
+    "migration:run": "dotenvx run -- typeorm-ts-node-commonjs migration:run -d src/db/migration-datasource.ts",
+    "start": "dotenvx run -- node dist/main.js",
+    "test": "dotenvx run -e \"NODE_OPTIONS=--experimental-vm-modules\" -- jest"
   },
   "dependencies": {
+    "@dotenvx/dotenvx": "1.51.0",
     "@nestjs/common": "11.1.6",
     "@nestjs/core": "11.1.6",
     "@nestjs/jwt": "11.0.0",
@@ -21,7 +23,6 @@
     "@nestjs/typeorm": "11.0.0",
     "bcrypt": "6.0.0",
     "date-fns": "4.1.0",
-    "dotenv": "17.2.2",
     "express": "5.1.0",
     "helmet": "8.1.0",
     "http-terminator": "3.2.0",
@@ -43,6 +44,7 @@
     "@types/express": "5.0.3",
     "@types/passport-jwt": "4.0.1",
     "@types/passport-local": "1.0.38",
-    "@types/pg": "8.15.5"
+    "@types/pg": "8.15.5",
+    "typeorm-pglite": "0.3.2"
   }
 }

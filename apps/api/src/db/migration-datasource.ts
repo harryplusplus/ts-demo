@@ -1,4 +1,4 @@
 import { DataSource } from "typeorm";
-import { dataSourceOptions } from "./data-source-options";
+import { getAppConfig } from "./config";
 
-export default new DataSource(dataSourceOptions);
+export default new DataSource(getAppConfig());
