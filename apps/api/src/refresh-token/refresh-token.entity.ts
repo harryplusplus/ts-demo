@@ -30,7 +30,7 @@ export class RefreshToken {
   updatedAt!: Date;
 
   @DeleteDateColumn({ type: "timestamptz" })
-  deletedAt!: Date | null;
+  deletedAt: Date | null = null;
 
   @Column({ type: "bigint" })
   userId!: string & Required;

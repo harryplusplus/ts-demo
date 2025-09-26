@@ -10,7 +10,7 @@
     "migration:gen": "dotenvx run -- node scripts/gen-migration.mts",
     "migration:run": "dotenvx run -- typeorm-ts-node-commonjs migration:run -d src/db/migration-datasource.ts",
     "start": "dotenvx run -- node dist/main.js",
-    "test": "dotenvx run -e \"NODE_OPTIONS=--experimental-vm-modules\" -- jest"
+    "test": "dotenvx run -e \"NODE_OPTIONS=--experimental-vm-modules\" -- jest --watch"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "1.51.0",
