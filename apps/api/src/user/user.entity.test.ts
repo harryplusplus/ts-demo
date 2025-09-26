@@ -1,5 +1,5 @@
 import { RequiredOnly } from "@/types/required";
-import { DataSource, DeepPartial } from "typeorm";
+import { DataSource, DeepPartial, ObjectLiteral, Repository } from "typeorm";
 import { initDataSource } from "../../tests/config";
 import { User } from "./user.entity";
 
@@ -14,13 +14,20 @@ afterAll(async () => {
 });
 
 describe("User entity", () => {
-  test("insert", async () => {
-    const userRepository = db.manager.getRepository(User);
+  let userRepository: Repository<User>;
+
+  beforeAll(() => {
+    userRepository = db.manager.getRepository(User);
+  });
+
+  let created: User;
+
+  test("create", () => {
     const input: RequiredOnly<User> = {
       email: "user@email.com",
       passwordHashed: "1",
     };
-    const created = userRepository.create(input as DeepPartial<User>);
+    created = userRepository.create(input as DeepPartial<User>);
     expect(created.constructor).toBe(User);
     expect(created).toEqual({
       createdAt: undefined,
@@ -31,17 +38,25 @@ describe("User entity", () => {
       updatedAt: undefined,
       uuid: expect.any(String) as unknown,
     });
+  });
+
+  let inserted: ObjectLiteral;
+
+  test("insert", async () => {
     const insertRes = await userRepository.insert(created);
     expect(insertRes).toMatchObject({
       generatedMaps: [{}],
     });
-    const inserted = insertRes.generatedMaps[0]!;
+    inserted = insertRes.generatedMaps[0]!;
     expect(inserted).toEqual({
       createdAt: expect.any(Date) as unknown,
       deletedAt: null,
       id: "1",
       updatedAt: expect.any(Date) as unknown,
     });
+  });
+
+  test("merge", () => {
     const merged = userRepository.merge(created, inserted);
     expect(merged.constructor).toBe(User);
     expect(merged).toEqual({
