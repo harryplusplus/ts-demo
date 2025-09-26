@@ -33,14 +33,25 @@ describe("User entity", () => {
     });
     const insertRes = await userRepository.insert(created);
     expect(insertRes).toMatchObject({
-      identifiers: [{ id: "1" }],
       generatedMaps: [{}],
     });
-    expect(insertRes.generatedMaps[0]).toEqual({
+    const inserted = insertRes.generatedMaps[0]!;
+    expect(inserted).toEqual({
       createdAt: expect.any(Date) as unknown,
       deletedAt: null,
       id: "1",
       updatedAt: expect.any(Date) as unknown,
+    });
+    const merged = userRepository.merge(created, inserted);
+    expect(merged.constructor).toBe(User);
+    expect(merged).toEqual({
+      createdAt: inserted["createdAt"] as unknown,
+      deletedAt: inserted["deletedAt"] as unknown,
+      email: created.email as unknown,
+      id: inserted["id"] as unknown,
+      passwordHashed: created.passwordHashed as unknown,
+      updatedAt: inserted["updatedAt"] as unknown,
+      uuid: created.uuid,
     });
   });
 });
