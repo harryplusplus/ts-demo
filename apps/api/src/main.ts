@@ -3,6 +3,7 @@ import "source-map-support/register";
 import { AppModule } from "@/app/app.module";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
+import { hello } from "@ts-demo/paddle-workflow";
 import helmet from "helmet";
 import { setupGracefulShutdown } from "nestjs-graceful-shutdown";
 import { cleanupOpenApiDoc } from "nestjs-zod";
@@ -17,6 +18,8 @@ bootstrap().catch((e) => {
 });
 
 async function bootstrap() {
+  hello();
+
   checkUtc();
   initializeTransactionalContext({ storageDriver: StorageDriver.AUTO });
 

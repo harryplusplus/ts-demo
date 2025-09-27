@@ -1,6 +1,7 @@
 import { AuthModule } from "@/auth/auth.module";
 import { JwtAccessAuthGuard } from "@/auth/jwt-access-auth.guard";
 import { DbModule } from "@/db/db.module";
+import { PaddleModule } from "@/paddle/paddle.module";
 import { RefreshTokenModule } from "@/refresh-token/refresh-token.module";
 import { UserModule } from "@/user/user.module";
 import { Module } from "@nestjs/common";
@@ -15,6 +16,7 @@ import { ZodSerializerInterceptor, ZodValidationPipe } from "nestjs-zod";
     UserModule,
     RefreshTokenModule,
     AuthModule,
+    PaddleModule,
   ],
   providers: [
     {

@@ -22,6 +22,9 @@
     "@nestjs/platform-express": "11.1.6",
     "@nestjs/swagger": "11.2.0",
     "@nestjs/typeorm": "11.0.0",
+    "@temporalio/client": "1.13.0",
+    "@temporalio/workflow": "1.13.0",
+    "@ts-demo/paddle-workflow": "workspace:*",
     "bcrypt": "6.0.0",
     "date-fns": "4.1.0",
     "deepmerge": "4.3.1",
@@ -38,7 +41,6 @@
     "source-map-support": "0.5.21",
     "typeorm": "0.3.27",
     "typeorm-transactional": "0.5.0",
-    "typescript-retry-decorator": "2.4.2",
     "zod": "4.1.11"
   },
   "devDependencies": {

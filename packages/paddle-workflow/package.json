@@ -1,5 +1,5 @@
 {
-  "name": "@ts-demo/paddle-task",
+  "name": "@ts-demo/paddle-workflow",
   "version": "1.0.0",
   "type": "commonjs",
   "exports": {
@@ -13,10 +13,6 @@
     "dev": "tsup --watch src"
   },
   "dependencies": {
-    "@paddle/paddle-node-sdk": "3.2.1",
-    "@temporalio/client": "1.13.0",
-    "@temporalio/worker": "1.13.0",
-    "@temporalio/workflow": "1.13.0",
-    "nanoid": "5.1.6"
+    "@temporalio/workflow": "1.13.0"
   }
 }

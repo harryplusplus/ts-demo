@@ -5,7 +5,9 @@
     "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "module": "node20",
+    "moduleResolution": "node16"
   },
   "include": ["src/**/*.ts"]
 }
