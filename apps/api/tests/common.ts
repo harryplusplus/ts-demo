@@ -13,3 +13,7 @@ export async function initDataSource(): Promise<DataSource> {
   await dataSource.runMigrations();
   return dataSource;
 }
+
+export function expectAny<T>(constructor: new (...args: any[]) => T): T {
+  return expect.any(constructor) as T;
+}

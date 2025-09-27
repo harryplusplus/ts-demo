@@ -17,10 +17,15 @@ export type RequiredOnly<T extends Entity> = {
 export type RequiredIncludes<T extends Entity> = EntityLike<T> &
   RequiredOnly<T>;
 
+async function insertStrict<T extends Entity>(
+  repository: Repository<T>,
+  entityOrEntityLikes
+) {}
+
 async function createManyInternal<T extends Entity>(
   repository: Repository<T>,
   entityLikes: EntityLike<T>[]
-) {
+): Promise<T[]> {
   const entities = entityLikes.map((x) => repository.create(x));
   const res = await repository.insert(entities);
   if (entities.length !== res.generatedMaps.length) {
@@ -69,6 +74,6 @@ export async function createManyFromRequiredOnly<T extends Entity>(
 export async function createOneFromRequiredOnly<T extends Entity>(
   repository: Repository<T>,
   entityLike: RequiredOnly<T>
-) {
+): Promise<T> {
   return await createOneInternal(repository, entityLike as EntityLike<T>);
 }

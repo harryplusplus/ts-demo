@@ -1,6 +1,7 @@
 import { RequiredOnly } from "@/types/required";
 import { DataSource, DeepPartial, ObjectLiteral, Repository } from "typeorm";
-import { initDataSource } from "../../tests/config";
+import z from "zod";
+import { expectAny, initDataSource } from "../../tests/common";
 import { User } from "./user.entity";
 
 let db: DataSource;
@@ -20,7 +21,13 @@ describe("User entity", () => {
     userRepository = db.manager.getRepository(User);
   });
 
-  let created: User;
+  const createdSchema = z.object({
+    deletedAt: z.null(),
+    email: z.email(),
+    passwordHashed: z.string(),
+    uuid: z.string(),
+  });
+  let created: User & { __partial?: true };
 
   test("create", () => {
     const input: RequiredOnly<User> = {
@@ -28,7 +35,7 @@ describe("User entity", () => {
       passwordHashed: "1",
     };
     created = userRepository.create(input as DeepPartial<User>);
-    expect(created.constructor).toBe(User);
+    createdSchema.parse(created);
     expect(created).toEqual({
       createdAt: undefined,
       deletedAt: null,
@@ -36,36 +43,46 @@ describe("User entity", () => {
       id: undefined,
       passwordHashed: "1",
       updatedAt: undefined,
-      uuid: expect.any(String) as unknown,
+      uuid: expectAny(String),
     });
   });
 
-  let inserted: ObjectLiteral;
+  const insertedSchema = z
+    .object({
+      createdAt: z.date(),
+      deletedAt: z.null(),
+      id: z.string(),
+      updatedAt: z.date(),
+    })
+    .strict();
+  let inserted: z.infer<typeof insertedSchema>;
 
   test("insert", async () => {
     const insertRes = await userRepository.insert(created);
     expect(insertRes).toMatchObject({
       generatedMaps: [{}],
     });
-    inserted = insertRes.generatedMaps[0]!;
+    inserted = insertedSchema.parse(insertRes.generatedMaps[0]!);
     expect(inserted).toEqual({
-      createdAt: expect.any(Date) as unknown,
+      createdAt: expectAny(Date),
       deletedAt: null,
       id: "1",
-      updatedAt: expect.any(Date) as unknown,
+      updatedAt: expectAny(Date),
     });
   });
 
   test("merge", () => {
     const merged = userRepository.merge(created, inserted);
     expect(merged.constructor).toBe(User);
+    const a = created.email!;
+    const b = created.passwordHashed;
     expect(merged).toEqual({
-      createdAt: inserted["createdAt"] as unknown,
-      deletedAt: inserted["deletedAt"] as unknown,
-      email: created.email as unknown,
-      id: inserted["id"] as unknown,
-      passwordHashed: created.passwordHashed as unknown,
-      updatedAt: inserted["updatedAt"] as unknown,
+      createdAt: inserted.createdAt,
+      deletedAt: inserted.deletedAt,
+      email: created.email,
+      id: inserted.id,
+      passwordHashed: created.passwordHashed,
+      updatedAt: inserted.updatedAt,
       uuid: created.uuid,
     });
   });
