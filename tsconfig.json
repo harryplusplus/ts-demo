@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
     "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
     "exactOptionalPropertyTypes": true,
     "experimentalDecorators": true,
-    "module": "node20",
+    "isolatedModules": true,
+    "module": "es2022",
     "moduleDetection": "force",
-    "moduleResolution": "node16",
+    "moduleResolution": "bundler",
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
@@ -16,7 +20,10 @@
     "sourceMap": true,
     "strict": true,
     "target": "es2022",
-    "types": ["@types/node"],
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": false
+  },
+  "ts-node": {
+    "require": ["@swc-node/register"],
+    "swc": true
   }
 }

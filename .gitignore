@@ -7,3 +7,10 @@ dist/
 
 # Turborepo
 .turbo/
+
+# .env
+.env*
+!.env.example
+
+# Temp files
+.temp/

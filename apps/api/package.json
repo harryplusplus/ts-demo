@@ -1,0 +1,53 @@
+{
+  "name": "@ts-demo/api",
+  "type": "commonjs",
+  "scripts": {
+    "build": "nest build",
+    "check-types": "tsc --noEmit",
+    "debug": "nodemon -w src -e ts -x dotenvx run -- ts-node src/main.ts",
+    "dev": "dotenvx run -- nest start -w --type-check",
+    "gen-types:env": "node scripts/gen-types-env.mts",
+    "migration:gen": "dotenvx run -- node scripts/gen-migration.mts",
+    "migration:run": "dotenvx run -- typeorm-ts-node-commonjs migration:run -d src/db/migration-datasource.ts",
+    "start": "dotenvx run -- node dist/main.js",
+    "test": "dotenvx run -f .env.test -- jest",
+    "test:dev": "dotenvx run -f .env.test -- jest --watch"
+  },
+  "dependencies": {
+    "@dotenvx/dotenvx": "1.51.0",
+    "@nestjs/common": "11.1.6",
+    "@nestjs/core": "11.1.6",
+    "@nestjs/jwt": "11.0.0",
+    "@nestjs/passport": "11.0.5",
+    "@nestjs/platform-express": "11.1.6",
+    "@nestjs/swagger": "11.2.0",
+    "@nestjs/typeorm": "11.0.0",
+    "bcrypt": "6.0.0",
+    "date-fns": "4.1.0",
+    "deepmerge": "4.3.1",
+    "express": "5.1.0",
+    "helmet": "8.1.0",
+    "http-terminator": "3.2.0",
+    "nestjs-graceful-shutdown": "1.0.3",
+    "nestjs-zod": "5.0.1",
+    "passport": "0.7.0",
+    "passport-jwt": "4.0.1",
+    "passport-local": "1.0.0",
+    "pg": "8.16.3",
+    "rxjs": "7.8.2",
+    "source-map-support": "0.5.21",
+    "typeorm": "0.3.27",
+    "typeorm-transactional": "0.5.0",
+    "typescript-retry-decorator": "2.4.2",
+    "zod": "4.1.11"
+  },
+  "devDependencies": {
+    "@ts-demo/paddle-task": "workspace:*",
+    "@types/bcrypt": "6.0.0",
+    "@types/express": "5.0.3",
+    "@types/passport-jwt": "4.0.1",
+    "@types/passport-local": "1.0.38",
+    "@types/pg": "8.15.5",
+    "typeorm-pglite": "0.3.2"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@ts-demo/paddle-task",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch src"
+  },
+  "dependencies": {
+    "@paddle/paddle-node-sdk": "3.2.1"
+  }
+}

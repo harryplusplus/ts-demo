@@ -1,5 +1,6 @@
 packages:
   - apps/*
-  - libs/*
+  - packages/*
 engineStrict: true
 ignoreWorkspaceRootCheck: true
+injectWorkspacePackages: true
