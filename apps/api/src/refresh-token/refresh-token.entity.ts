@@ -42,10 +42,7 @@ export const RefreshTokenSchema = new EntitySchema<RefreshToken>({
     userId: { type: "bigint" },
   },
   relations: {
-    user: {
-      type: "many-to-one",
-      target: UserSchema.options.name,
-    },
+    user: { type: "many-to-one", target: UserSchema.options.name },
   },
   indices: [
     {
