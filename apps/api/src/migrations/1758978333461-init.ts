@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Init1758739243279 implements MigrationInterface {
-    name = 'Init1758739243279'
+export class Init1758978333461 implements MigrationInterface {
+    name = 'Init1758978333461'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -13,9 +13,9 @@ export class Init1758739243279 implements MigrationInterface {
                 "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "deleted_at" TIMESTAMP WITH TIME ZONE,
-                CONSTRAINT "uq_users_uuid" UNIQUE ("uuid"),
-                CONSTRAINT "uq_users_email" UNIQUE ("email"),
-                CONSTRAINT "pk_users_id" PRIMARY KEY ("id")
+                CONSTRAINT "users_uuid_unique" UNIQUE ("uuid"),
+                CONSTRAINT "users_email_unique" UNIQUE ("email"),
+                CONSTRAINT "users_id_primary_key" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -27,25 +27,25 @@ export class Init1758739243279 implements MigrationInterface {
                 "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "deleted_at" TIMESTAMP WITH TIME ZONE,
                 "user_id" bigint NOT NULL,
-                CONSTRAINT "uq_refresh_tokens_token" UNIQUE ("token"),
-                CONSTRAINT "pk_refresh_tokens_id" PRIMARY KEY ("id")
+                CONSTRAINT "refresh_tokens_token_unique" UNIQUE ("token"),
+                CONSTRAINT "refresh_tokens_id_primary_key" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
-            CREATE INDEX "idx_refresh_tokens_expires_at_deleted_at_user_id" ON "refresh_tokens" ("expires_at", "deleted_at", "user_id")
+            CREATE INDEX "refresh_tokens_expires_at_deleted_at_user_id_index" ON "refresh_tokens" ("expires_at", "deleted_at", "user_id")
         `);
         await queryRunner.query(`
             ALTER TABLE "refresh_tokens"
-            ADD CONSTRAINT "fk_refresh_tokens_user_id_users_id" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            ADD CONSTRAINT "refresh_tokens_user_id_users_id_foreign_key" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            ALTER TABLE "refresh_tokens" DROP CONSTRAINT "fk_refresh_tokens_user_id_users_id"
+            ALTER TABLE "refresh_tokens" DROP CONSTRAINT "refresh_tokens_user_id_users_id_foreign_key"
         `);
         await queryRunner.query(`
-            DROP INDEX "public"."idx_refresh_tokens_expires_at_deleted_at_user_id"
+            DROP INDEX "public"."refresh_tokens_expires_at_deleted_at_user_id_index"
         `);
         await queryRunner.query(`
             DROP TABLE "refresh_tokens"

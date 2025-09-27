@@ -1,89 +1,50 @@
-import { RequiredOnly } from "@/types/required";
-import { DataSource, DeepPartial, ObjectLiteral, Repository } from "typeorm";
+import deepmerge from "deepmerge";
+import { DataSource, Repository } from "typeorm";
 import z from "zod";
 import { expectAny, initDataSource } from "../../tests/common";
-import { User } from "./user.entity";
+import { User, UserInsert, UserSchema } from "./user.entity";
 
 let db: DataSource;
+let userRepository: Repository<User>;
 
 beforeAll(async () => {
   db = await initDataSource();
+  db.setOptions({ logging: ["query"] });
+  userRepository = db.manager.getRepository(UserSchema);
 });
 
 afterAll(async () => {
   await db?.destroy();
 });
 
-describe("User entity", () => {
-  let userRepository: Repository<User>;
-
-  beforeAll(() => {
-    userRepository = db.manager.getRepository(User);
-  });
-
-  const createdSchema = z.object({
-    deletedAt: z.null(),
-    email: z.email(),
-    passwordHashed: z.string(),
-    uuid: z.string(),
-  });
-  let created: User & { __partial?: true };
-
-  test("create", () => {
-    const input: RequiredOnly<User> = {
-      email: "user@email.com",
-      passwordHashed: "1",
-    };
-    created = userRepository.create(input as DeepPartial<User>);
-    createdSchema.parse(created);
-    expect(created).toEqual({
-      createdAt: undefined,
-      deletedAt: null,
-      email: "user@email.com",
-      id: undefined,
-      passwordHashed: "1",
-      updatedAt: undefined,
-      uuid: expectAny(String),
-    });
-  });
-
-  const insertedSchema = z
-    .object({
-      createdAt: z.date(),
-      deletedAt: z.null(),
-      id: z.string(),
-      updatedAt: z.date(),
-    })
-    .strict();
-  let inserted: z.infer<typeof insertedSchema>;
+describe("user entity", () => {
+  let inserted: User;
 
   test("insert", async () => {
-    const insertRes = await userRepository.insert(created);
-    expect(insertRes).toMatchObject({
-      generatedMaps: [{}],
-    });
-    inserted = insertedSchema.parse(insertRes.generatedMaps[0]!);
-    expect(inserted).toEqual({
+    const input: z.input<typeof UserInsert> = {
+      email: "user@email.com",
+      passwordHashed: "a",
+    };
+    const insert = UserInsert.parse(input);
+    const insertRes = await userRepository.insert(insert);
+    const merged = deepmerge(insert, insertRes.generatedMaps[0]!);
+    const parsed = User.parse(merged);
+    expect(parsed).toEqual<User>({
+      ...insert,
       createdAt: expectAny(Date),
       deletedAt: null,
       id: "1",
       updatedAt: expectAny(Date),
     });
+    inserted = parsed;
   });
 
-  test("merge", () => {
-    const merged = userRepository.merge(created, inserted);
-    expect(merged.constructor).toBe(User);
-    const a = created.email!;
-    const b = created.passwordHashed;
-    expect(merged).toEqual({
-      createdAt: inserted.createdAt,
-      deletedAt: inserted.deletedAt,
-      email: created.email,
-      id: inserted.id,
-      passwordHashed: created.passwordHashed,
-      updatedAt: inserted.updatedAt,
-      uuid: created.uuid,
+  test("findOne", async () => {
+    const user = await userRepository.findOne({
+      where: {
+        id: inserted.id,
+      },
     });
+    expect(user).toEqual<User>(inserted);
   });
 });

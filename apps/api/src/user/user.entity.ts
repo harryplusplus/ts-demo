@@ -1,33 +1,37 @@
-import { Required } from "@/types/required";
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Inserter } from "@/db/inserter";
+import { BigIntString } from "@/zod-types";
+import { EntitySchema } from "typeorm";
+import z from "zod";
 
-@Entity({ name: "users" })
-export class User {
-  @PrimaryGeneratedColumn({ type: "bigint" })
-  id!: string;
+export const User = z.object({
+  id: BigIntString,
+  uuid: z.uuidv4().default(() => crypto.randomUUID()),
+  email: z.email(),
+  passwordHashed: z.string().nonempty(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  deletedAt: z.date().nullable(),
+});
+export type User = z.infer<typeof User>;
 
-  @Column({ type: "uuid", unique: true })
-  uuid: string = crypto.randomUUID();
+export const UserInsert = User.pick({
+  uuid: true,
+  email: true,
+  passwordHashed: true,
+});
 
-  @Column({ type: "text", unique: true })
-  email!: string & Required;
+export const UserInserter = new Inserter<User, typeof UserInsert>(UserInsert);
 
-  @Column({ type: "text" })
-  passwordHashed!: string & Required;
-
-  @CreateDateColumn({ type: "timestamptz" })
-  createdAt!: Date;
-
-  @UpdateDateColumn({ type: "timestamptz" })
-  updatedAt!: Date;
-
-  @DeleteDateColumn({ type: "timestamptz" })
-  deletedAt: Date | null = null;
-}
+export const UserSchema = new EntitySchema<User>({
+  name: "user",
+  tableName: "users",
+  columns: {
+    id: { type: "bigint", primary: true, generated: "increment" },
+    uuid: { type: "uuid", unique: true },
+    email: { type: "text", unique: true },
+    passwordHashed: { type: "text" },
+    createdAt: { type: "timestamptz", createDate: true },
+    updatedAt: { type: "timestamptz", updateDate: true },
+    deletedAt: { type: "timestamptz", deleteDate: true },
+  },
+});

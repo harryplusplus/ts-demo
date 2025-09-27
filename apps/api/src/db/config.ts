@@ -15,7 +15,12 @@ export function getBaseConfig() {
         : "src/migrations/*.ts",
     ],
     namingStrategy: new NamingStrategy(),
-    logging: process.env.NODE_ENV === "production" ? ["error", "warn"] : "all",
+    logging:
+      process.env.NODE_ENV === "production"
+        ? ["error", "warn"]
+        : process.env.NODE_ENV === "development"
+        ? "all"
+        : false,
     useUTC: true,
   } satisfies DataSourceOptions;
 }

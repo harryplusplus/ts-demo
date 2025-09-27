@@ -1,6 +1,6 @@
-import { RefreshTokenRepository } from "@/refresh-token/refresh-token.repository";
+import { RefreshTokenService } from "@/refresh-token/refresh-token.service";
 import { User } from "@/user/user.entity";
-import { UserRepository } from "@/user/user.repository";
+import { UserService } from "@/user/user.service";
 import {
   ConflictException,
   Injectable,
@@ -9,7 +9,7 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { addDays } from "date-fns";
-import { IsNull, MoreThan, Or, QueryFailedError } from "typeorm";
+import { QueryFailedError } from "typeorm";
 import { Transactional } from "typeorm-transactional";
 import { AuthJwtService } from "./auth-jwt.service";
 import {
@@ -30,8 +30,8 @@ export class AuthService {
     private readonly authJwtService: AuthJwtService,
     private readonly passwordHashService: PasswordHashService,
     private readonly jwtService: JwtService,
-    private readonly userRepository: UserRepository,
-    private readonly refreshTokenRepository: RefreshTokenRepository
+    private readonly userService: UserService,
+    private readonly refreshTokenService: RefreshTokenService
   ) {}
 
   async signup(dto: EmailSigninDto) {
@@ -40,17 +40,14 @@ export class AuthService {
       password,
     });
     try {
-      await this.userRepository.createOneFromRequiredOnly({
-        email,
-        passwordHashed,
-      });
+      await this.userService.createUser({ email, passwordHashed });
     } catch (e) {
       if (
         e instanceof QueryFailedError &&
         "code" in e &&
         e.code === "23505" &&
         "constraint" in e &&
-        e.constraint === "uq_users_email"
+        e.constraint === "users_email_unique"
       ) {
         throw new ConflictException(new EmailExistsErrorDto());
       }
@@ -61,13 +58,8 @@ export class AuthService {
 
   @Transactional()
   async signin(user: User) {
-    const refreshToken = await this.refreshTokenRepository.findOneBy({
-      userId: user.id,
-      expiresAt: Or(IsNull(), MoreThan(new Date())),
-    });
-
     // NOTE: 데모에서는 단일 리프레시 토큰만 사용함.
-    if (refreshToken) {
+    if (await this.refreshTokenService.existsNotExpired({ userId: user.id })) {
       const accessToken = await this.authJwtService.createAccessToken({
         userUuid: user.uuid,
       });
@@ -82,9 +74,10 @@ export class AuthService {
     };
   }
 
+  @Transactional()
   async parseEmailAndPassword(dto: EmailSigninDto) {
     const { email, password } = dto;
-    const user = await this.userRepository.findOneBy({ email });
+    const user = await this.userService.findByEmail({ email });
     if (!user) {
       throw new UnauthorizedException(new InvalidEmailErrorDto());
     }
@@ -101,9 +94,10 @@ export class AuthService {
     return user;
   }
 
+  @Transactional()
   async parseJwtPayload(dto: JwtPayloadDto) {
     const { sub } = dto;
-    const user = await this.userRepository.findOneBy({ uuid: sub });
+    const user = await this.userService.findByUuid({ uuid: sub });
     if (!user) {
       throw new UnauthorizedException(new InvalidUserErrorDto());
     }
@@ -114,7 +108,7 @@ export class AuthService {
   @Transactional()
   async refresh(input: { user: User; dto: RefreshDto }) {
     const { user, dto } = input;
-    const deleteRes = await this.refreshTokenRepository.softDelete({
+    const deleteRes = await this.refreshTokenService.deleteByToken({
       token: dto.refreshToken,
     });
     if (deleteRes.affected !== 1) {
@@ -128,6 +122,7 @@ export class AuthService {
     };
   }
 
+  @Transactional()
   async createTokens(input: { user: User }) {
     const { user } = input;
     const refreshTokenString = await this.authJwtService.createRefreshToken({
@@ -137,12 +132,11 @@ export class AuthService {
       this.jwtService.decode(refreshTokenString)
     );
     const issuedAt = new Date(decoded.iat * 1000);
-    const refreshToken =
-      await this.refreshTokenRepository.createOneFromRequiredOnly({
-        userId: user.id,
-        token: refreshTokenString,
-        expiresAt: addDays(issuedAt, 7),
-      });
+    const refreshToken = await this.refreshTokenService.createRefreshToken({
+      userId: user.id,
+      token: refreshTokenString,
+      expiresAt: addDays(issuedAt, 7),
+    });
     const accessToken = await this.authJwtService.createAccessToken({
       userUuid: user.uuid,
     });

@@ -1,40 +1,55 @@
-import { Required } from "@/types/required";
-import { User } from "@/user/user.entity";
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  Index,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Inserter } from "@/db/inserter";
+import { User, UserSchema } from "@/user/user.entity";
+import { BigIntString } from "@/zod-types";
+import { EntitySchema } from "typeorm";
+import z from "zod";
 
-@Entity({ name: "refresh_tokens" })
-@Index(["expiresAt", "deletedAt", "user"])
-export class RefreshToken {
-  @PrimaryGeneratedColumn({ type: "bigint" })
-  id!: string;
+export const RefreshToken = z.object({
+  id: BigIntString,
+  token: z.string().nonempty(),
+  expiresAt: z.date().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  deletedAt: z.date().nullable(),
+  userId: BigIntString,
+  get user() {
+    return User.optional();
+  },
+});
+export type RefreshToken = z.infer<typeof RefreshToken>;
 
-  @Column({ type: "text", unique: true })
-  token!: string & Required;
+export const RefreshTokenInsert = RefreshToken.pick({
+  token: true,
+  expiresAt: true,
+  userId: true,
+});
 
-  @Column({ type: "timestamptz", nullable: true })
-  expiresAt!: (Date | null) & Required;
+export const RefreshTokenInserter = new Inserter<
+  RefreshToken,
+  typeof RefreshTokenInsert
+>(RefreshTokenInsert);
 
-  @CreateDateColumn({ type: "timestamptz" })
-  createdAt!: Date;
-
-  @UpdateDateColumn({ type: "timestamptz" })
-  updatedAt!: Date;
-
-  @DeleteDateColumn({ type: "timestamptz" })
-  deletedAt: Date | null = null;
-
-  @Column({ type: "bigint" })
-  userId!: string & Required;
-
-  @ManyToOne(() => User)
-  user?: User;
-}
+export const RefreshTokenSchema = new EntitySchema<RefreshToken>({
+  name: "refreshToken",
+  tableName: "refresh_tokens",
+  columns: {
+    id: { type: "bigint", primary: true, generated: "increment" },
+    token: { type: "text", unique: true },
+    expiresAt: { type: "timestamptz", nullable: true },
+    createdAt: { type: "timestamptz", createDate: true },
+    updatedAt: { type: "timestamptz", updateDate: true },
+    deletedAt: { type: "timestamptz", deleteDate: true },
+    userId: { type: "bigint" },
+  },
+  relations: {
+    user: {
+      type: "many-to-one",
+      target: UserSchema.options.name,
+    },
+  },
+  indices: [
+    {
+      columns: ["expiresAt", "deletedAt", "userId"],
+    },
+  ],
+});

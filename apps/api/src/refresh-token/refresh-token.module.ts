@@ -1,8 +1,11 @@
 import { Module } from "@nestjs/common";
-import { RefreshTokenRepository } from "./refresh-token.repository";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { RefreshTokenSchema } from "./refresh-token.entity";
+import { RefreshTokenService } from "./refresh-token.service";
 
 @Module({
-  providers: [RefreshTokenRepository],
-  exports: [RefreshTokenRepository],
+  imports: [TypeOrmModule.forFeature([RefreshTokenSchema])],
+  providers: [RefreshTokenService],
+  exports: [RefreshTokenService],
 })
 export class RefreshTokenModule {}
