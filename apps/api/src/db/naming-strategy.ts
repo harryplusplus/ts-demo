@@ -35,18 +35,18 @@ export class NamingStrategy
     tableOrName: Table | string,
     columnNames: string[]
   ): string {
-    return `pk_${
+    return `${
       typeof tableOrName === "string" ? tableOrName : tableOrName.name
-    }_${columnNames.join("_")}`;
+    }_${columnNames.join("_")}_primary_key`;
   }
 
   override uniqueConstraintName(
     tableOrName: Table | string,
     columnNames: string[]
   ): string {
-    return `uq_${
+    return `${
       typeof tableOrName === "string" ? tableOrName : tableOrName.name
-    }_${columnNames.join("_")}`;
+    }_${columnNames.join("_")}_unique`;
   }
 
   override foreignKeyName(
@@ -55,11 +55,11 @@ export class NamingStrategy
     referencedTablePath?: string,
     referencedColumnNames?: string[]
   ): string {
-    return `fk_${
+    return `${
       typeof tableOrName === "string" ? tableOrName : tableOrName.name
     }_${columnNames.join(
       "_"
-    )}_${referencedTablePath}_${referencedColumnNames?.join("_")}`;
+    )}_${referencedTablePath}_${referencedColumnNames?.join("_")}_foreign_key`;
   }
 
   override indexName(
@@ -67,9 +67,9 @@ export class NamingStrategy
     columns: string[],
     where?: string
   ): string {
-    return `idx_${
+    return `${
       typeof tableOrName === "string" ? tableOrName : tableOrName.name
-    }_${columns.join("_")}${where ? `_${snakeCase(where)}` : ""}`;
+    }_${columns.join("_")}${where ? `_${snakeCase(where)}` : ""}_index`;
   }
 
   override joinColumnName(relationName: string, referencedColumnName: string) {
