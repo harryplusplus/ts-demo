@@ -34,6 +34,7 @@ export class AuthService {
     private readonly refreshTokenService: RefreshTokenService
   ) {}
 
+  @Transactional()
   async signup(dto: EmailSigninDto) {
     const { email, password } = dto;
     const passwordHashed = await this.passwordHashService.hash({
@@ -125,17 +126,9 @@ export class AuthService {
   @Transactional()
   async createTokens(input: { user: User }) {
     const { user } = input;
-    const refreshTokenString = await this.authJwtService.createRefreshToken({
-      userUuid: user.uuid,
-    });
-    const decoded = JwtPayloadDto.schema.parse(
-      this.jwtService.decode(refreshTokenString)
-    );
-    const issuedAt = new Date(decoded.iat * 1000);
-    const refreshToken = await this.refreshTokenService.createRefreshToken({
+    const refreshToken = await this.createRefreshToken({
       userId: user.id,
-      token: refreshTokenString,
-      expiresAt: addDays(issuedAt, 7),
+      userUuid: user.uuid,
     });
     const accessToken = await this.authJwtService.createAccessToken({
       userUuid: user.uuid,
@@ -144,5 +137,22 @@ export class AuthService {
       accessToken,
       refreshToken,
     };
+  }
+
+  @Transactional()
+  async createRefreshToken(input: { userUuid: string; userId: string }) {
+    const { userUuid, userId } = input;
+    const refreshTokenString = await this.authJwtService.createRefreshToken({
+      userUuid,
+    });
+    const decoded = JwtPayloadDto.schema.parse(
+      this.jwtService.decode(refreshTokenString)
+    );
+    const issuedAt = new Date(decoded.iat * 1000);
+    return await this.refreshTokenService.createRefreshToken({
+      userId,
+      token: refreshTokenString,
+      expiresAt: addDays(issuedAt, 7),
+    });
   }
 }

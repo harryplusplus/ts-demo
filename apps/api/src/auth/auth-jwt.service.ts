@@ -12,6 +12,7 @@ export class AuthJwtService {
       {
         subject: userUuid,
         expiresIn: "15m",
+        jwtid: crypto.randomUUID(),
       }
     );
     return accessToken;
@@ -23,6 +24,7 @@ export class AuthJwtService {
       {},
       {
         subject: userUuid,
+        jwtid: crypto.randomUUID(),
       }
     );
     return refreshToken;

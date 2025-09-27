@@ -3,5 +3,5 @@
     "typescript": true
   },
   "ignorePaths": [],
-  "words": ["dotenvx", "timestamptz"]
+  "words": ["dotenvx", "jwtid", "retryable", "timestamptz"]
 }
