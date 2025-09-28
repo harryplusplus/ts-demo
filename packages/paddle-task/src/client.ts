@@ -1,6 +1,6 @@
 import { Client, Connection } from "@temporalio/client";
 import { nanoid } from "nanoid";
-import { example } from "./workflows";
+import { DO_WORKFLOW, DoWorkflow, example } from "./workflows";
 
 run().catch((err) => {
   console.error(err);
@@ -21,10 +21,10 @@ async function run() {
     // namespace: 'foo.bar', // connects to 'default' namespace if not specified
   });
 
-  const handle = await client.workflow.start(example, {
+  const handle = await client.workflow.start<DoWorkflow>(DO_WORKFLOW, {
     taskQueue: "hello-world",
     // type inference works! args: [name: string]
-    args: ["Temporal"],
+    args: [""],
     // in practice, use a meaningful business ID, like customerId or transactionId
     workflowId: "workflow-" + nanoid(),
   });

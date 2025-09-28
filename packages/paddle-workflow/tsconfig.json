@@ -1,13 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "outDir": "dist",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "module": "node20",
-    "moduleResolution": "node16"
+    }
   },
   "include": ["src/**/*.ts"]
 }
