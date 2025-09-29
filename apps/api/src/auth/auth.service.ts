@@ -1,6 +1,7 @@
 import { RefreshTokenService } from "@/refresh-token/refresh-token.service";
 import { User } from "@/user/user.entity";
 import { UserService } from "@/user/user.service";
+import { Transactional } from "@mikro-orm/postgresql";
 import {
   ConflictException,
   Injectable,
@@ -9,8 +10,6 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { addDays } from "date-fns";
-import { QueryFailedError } from "typeorm";
-import { Transactional } from "typeorm-transactional";
 import { AuthJwtService } from "./auth-jwt.service";
 import {
   EmailExistsErrorDto,
@@ -34,26 +33,25 @@ export class AuthService {
     private readonly refreshTokenService: RefreshTokenService
   ) {}
 
-  @Transactional()
   async signup(dto: EmailSigninDto) {
     const { email, password } = dto;
     const passwordHashed = await this.passwordHashService.hash({
       password,
     });
     try {
-      await this.userService.createUser({ email, passwordHashed });
+      this.userService.createUser({ email, passwordHashed });
     } catch (e) {
-      if (
-        e instanceof QueryFailedError &&
-        "code" in e &&
-        e.code === "23505" &&
-        "constraint" in e &&
-        e.constraint === "users_email_unique"
-      ) {
-        throw new ConflictException(new EmailExistsErrorDto());
-      }
-
-      throw e;
+      // if (
+      //   e instanceof QueryFailedError &&
+      //   "code" in e &&
+      //   e.code === "23505" &&
+      //   "constraint" in e &&
+      //   e.constraint === "users_email_unique"
+      // ) {
+      //
+      // }
+      console.error(e);
+      throw new ConflictException(new EmailExistsErrorDto());
     }
   }
 
@@ -109,10 +107,11 @@ export class AuthService {
   @Transactional()
   async refresh(input: { user: User; dto: RefreshDto }) {
     const { user, dto } = input;
-    const deleteRes = await this.refreshTokenService.deleteByToken({
-      token: dto.refreshToken,
-    });
-    if (deleteRes.affected !== 1) {
+    if (
+      !(await this.refreshTokenService.deleteByToken({
+        token: dto.refreshToken,
+      }))
+    ) {
       throw new NotFoundException(new RefreshTokenNotFoundErrorDto());
     }
 
@@ -127,8 +126,8 @@ export class AuthService {
   async createTokens(input: { user: User }) {
     const { user } = input;
     const refreshToken = await this.createRefreshToken({
-      userId: user.id,
       userUuid: user.uuid,
+      userId: user.id,
     });
     const accessToken = await this.authJwtService.createAccessToken({
       userUuid: user.uuid,
@@ -141,18 +140,14 @@ export class AuthService {
 
   @Transactional()
   async createRefreshToken(input: { userUuid: string; userId: string }) {
-    const { userUuid, userId } = input;
-    const refreshTokenString = await this.authJwtService.createRefreshToken({
+    const { userId, userUuid } = input;
+    const token = await this.authJwtService.createRefreshToken({
       userUuid,
     });
-    const decoded = JwtPayloadDto.schema.parse(
-      this.jwtService.decode(refreshTokenString)
-    );
-    const issuedAt = new Date(decoded.iat * 1000);
-    return await this.refreshTokenService.createRefreshToken({
+    return this.refreshTokenService.createRefreshToken({
       userId,
-      token: refreshTokenString,
-      expiresAt: addDays(issuedAt, 7),
+      token,
+      expiresAt: addDays(new Date(), 7),
     });
   }
 }

@@ -1,30 +1,31 @@
 import { CURRENT_TIMESTAMP, IDENTITY_PRIMARY_KEY } from "@/db/constants";
+import { User } from "@/user/user.entity";
 import {
   BigIntType,
   Entity,
+  Index,
+  ManyToOne,
   PrimaryKey,
-  PrimaryKeyProp,
   Property,
+  type Ref,
 } from "@mikro-orm/core";
 import { SoftDeletable } from "mikro-orm-soft-delete";
 
-@SoftDeletable(() => User, "deletedAt", () => new Date())
-@Entity({ tableName: "users" })
-export class User {
+@Index({ properties: ["expiresAt", "deletedAt", "user"] })
+@SoftDeletable(() => RefreshToken, "deletedAt", () => new Date())
+@Entity({ tableName: "refresh_tokens" })
+export class RefreshToken {
   @PrimaryKey({
     type: new BigIntType("string"),
     generated: IDENTITY_PRIMARY_KEY,
   })
   id!: string;
 
-  @Property({ type: "uuid", unique: true })
-  uuid: string = crypto.randomUUID();
-
   @Property({ type: "text", unique: true })
-  email!: string;
+  token!: string;
 
-  @Property({ type: "text" })
-  passwordHashed!: string;
+  @Property({ type: "timestamptz", nullable: true })
+  expiresAt: Date | null = null;
 
   @Property({ type: "timestamptz", defaultRaw: CURRENT_TIMESTAMP })
   createdAt!: Date;
@@ -35,5 +36,6 @@ export class User {
   @Property({ type: "timestamptz", nullable: true })
   deletedAt: Date | null = null;
 
-  [PrimaryKeyProp]?: "id";
+  @ManyToOne({ entity: () => User, ref: true })
+  user!: Ref<User>;
 }

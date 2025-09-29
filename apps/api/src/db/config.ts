@@ -1,31 +1,17 @@
-import { DataSourceOptions } from "typeorm";
-import { NamingStrategy } from "./naming-strategy";
+import { defineConfig, PostgreSqlDriver } from "@mikro-orm/postgresql";
+import { SoftDeleteHandler } from "mikro-orm-soft-delete";
 
-export function getBaseConfig() {
+export type Options = Parameters<typeof defineConfig>[0];
+
+export function getBaseConfig(): Options {
   return {
-    type: "postgres",
-    entities: [
-      process.env.NODE_ENV === "production"
-        ? "dist/**/*.entity.js"
-        : "src/**/*.entity.ts",
-    ],
-    migrations: [
-      process.env.NODE_ENV === "production"
-        ? "dist/migrations/*.js"
-        : "src/migrations/*.ts",
-    ],
-    namingStrategy: new NamingStrategy(),
-    logging:
-      process.env.NODE_ENV === "production"
-        ? ["error", "warn"]
-        : process.env.NODE_ENV === "development"
-        ? "all"
-        : false,
-    useUTC: true,
-  } satisfies DataSourceOptions;
+    entities: ["dist/**/*.entity.js"],
+    entitiesTs: ["src/**/*.entity.ts"],
+    extensions: [SoftDeleteHandler],
+  };
 }
 
-export function getAppConfig() {
+export function getAppConfig(): Options {
   const { DATABASE_URL } = process.env;
   if (!DATABASE_URL) {
     throw new Error("Invalid DATABASE_URL.");
@@ -33,6 +19,7 @@ export function getAppConfig() {
 
   return {
     ...getBaseConfig(),
-    url: DATABASE_URL,
-  } satisfies DataSourceOptions;
+    clientUrl: DATABASE_URL,
+    driver: PostgreSqlDriver,
+  };
 }

@@ -1,20 +1,19 @@
+import { EntityRepository, MikroORM } from "@mikro-orm/postgresql";
 import deepmerge from "deepmerge";
-import { DataSource, Repository } from "typeorm";
+import { initOrm } from "dev/test-utils";
 import z from "zod";
-import { expectAny, initDataSource } from "../../tests/common";
-import { User, UserInsert, UserSchema } from "./user.entity";
+import { User } from "./user.entity";
 
-let db: DataSource;
-let userRepository: Repository<User>;
+let orm: MikroORM;
+let userRepository: EntityRepository<User>;
 
 beforeAll(async () => {
-  db = await initDataSource();
-  db.setOptions({ logging: ["query"] });
-  userRepository = db.manager.getRepository(UserSchema);
+  orm = await initOrm();
+  userRepository = orm.em.getRepository(User);
 });
 
 afterAll(async () => {
-  await db?.destroy();
+  await orm?.close();
 });
 
 describe("user entity", () => {
