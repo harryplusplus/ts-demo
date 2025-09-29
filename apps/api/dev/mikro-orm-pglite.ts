@@ -1,3 +1,4 @@
+import { defineConfig, type Options } from "@mikro-orm/core";
 import {
   AbstractSqlDriver,
   PostgreSqlConnection,
@@ -25,6 +26,10 @@ export class PGliteSqlConnection extends PostgreSqlConnection {
     this.client = this.createKnexClient(PGliteKnexDialect as unknown as string);
     this.connected = true;
   }
+
+  override getDefaultClientUrl() {
+    return "pglite://default.url:1";
+  }
 }
 
 export class PGliteSqlDriver extends AbstractSqlDriver<PGliteSqlConnection> {
@@ -34,4 +39,14 @@ export class PGliteSqlDriver extends AbstractSqlDriver<PGliteSqlConnection> {
       "pg",
     ]);
   }
+}
+
+export type PGliteSqlOptions = Options<PGliteSqlDriver>;
+
+export function definePGliteSqlConfig(options?: PGliteSqlOptions) {
+  return defineConfig({
+    driver: PGliteSqlDriver,
+    dbName: "postgres",
+    ...options,
+  });
 }
