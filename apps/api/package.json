@@ -15,13 +15,14 @@
   },
   "dependencies": {
     "@dotenvx/dotenvx": "1.51.0",
+    "@mikro-orm/core": "6.5.6",
+    "@mikro-orm/postgresql": "6.5.6",
     "@nestjs/common": "11.1.6",
     "@nestjs/core": "11.1.6",
     "@nestjs/jwt": "11.0.0",
     "@nestjs/passport": "11.0.5",
     "@nestjs/platform-express": "11.1.6",
     "@nestjs/swagger": "11.2.0",
-    "@nestjs/typeorm": "11.0.0",
     "@temporalio/client": "1.13.0",
     "@temporalio/workflow": "1.13.0",
     "@ts-demo/paddle-workflow": "workspace:*",
@@ -39,17 +40,20 @@
     "pg": "8.16.3",
     "rxjs": "7.8.2",
     "source-map-support": "0.5.21",
-    "typeorm": "0.3.27",
-    "typeorm-transactional": "0.5.0",
     "zod": "4.1.11"
   },
   "devDependencies": {
+    "@mikro-orm/cli": "6.5.6",
+    "@mikro-orm/migrations": "6.5.6",
+    "@pgsql/traverse": "17.1.0",
+    "@pgsql/types": "17.6.1",
     "@ts-demo/paddle-task": "workspace:*",
     "@types/bcrypt": "6.0.0",
     "@types/express": "5.0.3",
     "@types/passport-jwt": "4.0.1",
     "@types/passport-local": "1.0.38",
     "@types/pg": "8.15.5",
-    "typeorm-pglite": "0.3.2"
+    "mikro-orm-pg-migration-generator": "0.1.4",
+    "sql-formatter": "15.6.9"
   }
 }
