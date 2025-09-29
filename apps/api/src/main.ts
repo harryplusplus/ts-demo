@@ -40,8 +40,6 @@ function checkUtc() {
 
 async function setupSwagger(app: NestExpressApplication) {
   const { DocumentBuilder, SwaggerModule } = await import("@nestjs/swagger");
-  const metadata = await import("./metadata");
-  await SwaggerModule.loadPluginMetadata(metadata.default);
   SwaggerModule.setup(
     "/api",
     app,
