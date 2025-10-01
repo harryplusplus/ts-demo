@@ -1,68 +1,74 @@
-import {
-  EntityManager,
-  EntityRepository,
-  MikroORM,
-  wrap,
-} from "@mikro-orm/postgresql";
-import { initOrm } from "dev/test-utils";
+import { EntityManager, MikroORM, wrap } from "@mikro-orm/postgresql";
+import { expectAny, initOrm } from "dev/test-utils";
 import { User } from "./user.entity";
 
 let orm: MikroORM;
 let em: EntityManager;
-let userRepository: EntityRepository<User>;
 
 beforeAll(async () => {
   orm = await initOrm();
   em = orm.em.fork();
-  userRepository = em.getRepository(User);
 });
 
 afterAll(async () => {
   await orm?.close();
 });
 
-describe("user entity", () => {
-  let inserted: User;
+let userId: string;
 
-  test("insert", async () => {
-    const user = new User();
-    expect(wrap(user).isInitialized()).toBe(true);
+test("create", async () => {
+  const user = new User();
+  em.persist(user);
 
-    console.log(JSON.stringify(user, null));
-    user.email = "user@email.com";
-    user.passwordHashed = "1";
+  expect(wrap(user).isInitialized()).toBe(true);
+  expect(wrap(user, true).hasPrimaryKey()).toBe(false);
 
-    em.persist(user);
-    console.log(JSON.stringify(user, null));
-    await em.flush();
-    expect(wrap(user).isInitialized()).toBe(true);
+  wrap(user).assign({ email: "user@email.com", passwordHashed: "1" });
+
+  expect(user).toEqual({
+    email: "user@email.com",
+    passwordHashed: "1",
+    deletedAt: null,
+    uuid: expectAny(String),
   });
 
-  // test("insert", async () => {
-  //   const input: z.input<typeof UserInsert> = {
-  //     email: "user@email.com",
-  //     passwordHashed: "a",
-  //   };
-  //   const insert = UserInsert.parse(input);
-  //   const insertRes = await userRepository.insert(insert);
-  //   const merged = deepmerge(insert, insertRes.generatedMaps[0]!);
-  //   const parsed = User.parse(merged);
-  //   expect(parsed).toEqual<User>({
-  //     ...insert,
-  //     createdAt: expectAny(Date),
-  //     deletedAt: null,
-  //     id: "1",
-  //     updatedAt: expectAny(Date),
-  //   });
-  //   inserted = parsed;
-  // });
+  await em.flush();
 
-  // test("findOne", async () => {
-  //   const user = await userRepository.findOne({
-  //     where: {
-  //       id: inserted.id,
-  //     },
-  //   });
-  //   expect(user).toEqual<User>(inserted);
-  // });
+  expect(wrap(user).isInitialized()).toBe(true);
+  expect(wrap(user, true).hasPrimaryKey()).toBe(true);
+
+  userId = user.id;
+});
+
+test("find from identity map", async () => {
+  const user = await em.findOneOrFail(User, { id: userId });
+
+  expect(wrap(user).isInitialized()).toBe(true);
+  expect(wrap(user, true).hasPrimaryKey()).toBe(true);
+});
+
+test("find from db", async () => {
+  const em2 = em.fork();
+  const user = await em2.findOneOrFail(User, { id: userId });
+
+  expect(wrap(user).isInitialized()).toBe(true);
+  expect(wrap(user, true).hasPrimaryKey()).toBe(true);
+});
+
+test("safe delete", async () => {
+  {
+    const user = em.getReference(User, userId);
+    em.remove(user);
+    await em.flush();
+  }
+  {
+    const user = await em
+      .qb(User)
+      .select("*")
+      .where({ id: userId })
+      .execute("get");
+    expect(user).toMatchObject({
+      deletedAt: expectAny(Date),
+    });
+  }
 });

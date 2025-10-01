@@ -52,8 +52,9 @@
     "@types/passport-jwt": "4.0.1",
     "@types/passport-local": "1.0.38",
     "jest": "30.2.0",
-    "knex-pglite": "0.12.0",
     "mikro-orm-pg-migration-generator": "0.1.6",
-    "sql-formatter": "15.6.9"
+    "mikro-orm-pglite": "0.1.0",
+    "sql-formatter": "15.6.9",
+    "type-fest": "5.0.1"
   }
 }

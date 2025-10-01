@@ -1,23 +1,19 @@
 import { getBaseConfig } from "@/db/config";
-import { MikroORM, Options } from "@mikro-orm/postgresql";
-import { PGliteSqlDriver } from "./mikro-orm-pglite";
+import { MikroORM } from "mikro-orm-pglite";
+import { Constructor } from "type-fest";
 
 export async function initOrm(): Promise<MikroORM> {
-  const config: Options = {
+  const orm = await MikroORM.init({
     ...getBaseConfig(),
-
-    driver: PGliteSqlDriver,
-    dbName: "postgres",
-
+    dbName: "test-db",
     migrations: { pathTs: "src/migrations" },
     preferTs: true,
-  };
-  const orm = await MikroORM.init(config);
+    debug: true,
+  });
   await orm.migrator.up();
   return orm;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function expectAny<T>(constructor: new (...args: any[]) => T): T {
+export function expectAny<T>(constructor: Constructor<T>): T {
   return expect.any(constructor) as T;
 }
