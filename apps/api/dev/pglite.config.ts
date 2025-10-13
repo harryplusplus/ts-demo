@@ -24,7 +24,6 @@ export default defineConfig({
   dbName: "postgres",
   migrations: {
     generator: CustomMigrationGenerator,
-    snapshot: false,
     pathTs: "src/migrations",
   },
   preferTs: true,

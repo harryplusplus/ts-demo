@@ -1,11 +1,11 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20251013142552 extends Migration {
+export class Migration20251013171319 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(/* sql */ `
 create table "users" (
-  "id" bigint generated always as identity primary key not null,
+  "id" int8 generated always as identity primary key not null,
   "uuid" uuid not null,
   "email" text not null,
   "password_hashed" text not null,
@@ -25,7 +25,7 @@ add constraint "users_email_unique" unique ("email");
 
     this.addSql(/* sql */ `
 create table "refresh_tokens" (
-  "id" bigint generated always as identity primary key not null,
+  "id" int8 generated always as identity primary key not null,
   "token" text not null,
   "expires_at" timestamptz null,
   "created_at" timestamptz not null default current_timestamp,
