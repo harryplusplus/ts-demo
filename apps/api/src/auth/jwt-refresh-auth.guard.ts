@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { JWT_REFRESH_STRATEGY } from "./jwt-refresh.strategy";
+import { JWT_REFRESH_STRATEGY } from "./jwt-refresh.strategy.js";
 
 @Injectable()
 export class JwtRefreshAuthGuard extends AuthGuard(JWT_REFRESH_STRATEGY) {}

@@ -1,4 +1,3 @@
-import { CURRENT_TIMESTAMP, IDENTITY_PRIMARY_KEY } from "@/db/constants";
 import {
   BigIntType,
   Entity,
@@ -7,6 +6,7 @@ import {
   Property,
 } from "@mikro-orm/core";
 import { SoftDeletable } from "mikro-orm-soft-delete";
+import { CURRENT_TIMESTAMP, IDENTITY_PRIMARY_KEY } from "../db/constants.js";
 
 @SoftDeletable(() => User, "deletedAt", () => new Date())
 @Entity({ tableName: "users" })

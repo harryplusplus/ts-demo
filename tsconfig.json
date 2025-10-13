@@ -21,9 +21,5 @@
     "strict": true,
     "target": "es2022",
     "verbatimModuleSyntax": false
-  },
-  "ts-node": {
-    "require": ["@swc-node/register"],
-    "swc": true
   }
 }

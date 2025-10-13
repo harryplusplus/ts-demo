@@ -1,7 +1,7 @@
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { EntityRepository, Transactional } from "@mikro-orm/postgresql";
 import { Injectable } from "@nestjs/common";
-import { User } from "./user.entity";
+import { User } from "./user.entity.js";
 
 @Injectable()
 export class UserService {
@@ -11,11 +11,12 @@ export class UserService {
   ) {}
 
   @Transactional()
-  createUser(input: { email: string; passwordHashed: string }) {
+  async createUser(input: { email: string; passwordHashed: string }) {
     const user = new User();
     user.email = input.email;
     user.passwordHashed = input.passwordHashed;
     this.userRepository.getEntityManager().persist(user);
+    await Promise.resolve();
   }
 
   @Transactional()

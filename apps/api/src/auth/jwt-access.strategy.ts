@@ -1,9 +1,9 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
-import { getJwtSecret } from "./auth-utils";
-import { InvalidAccessTokenErrorDto, JwtPayloadDto } from "./auth.dto";
-import { AuthService } from "./auth.service";
+import { getJwtSecret } from "./auth-utils.js";
+import { InvalidAccessTokenErrorDto, JwtPayloadDto } from "./auth.dto.js";
+import { AuthService } from "./auth.service.js";
 
 export const JWT_ACCESS_STRATEGY = "jwt-access";
 

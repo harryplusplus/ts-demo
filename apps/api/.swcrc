@@ -6,14 +6,10 @@
     "parser": {
       "syntax": "typescript",
       "decorators": true
-    },
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
     }
   },
   "module": {
-    "type": "commonjs"
+    "type": "es6"
   },
-  "sourceMaps": true
+  "sourceMaps": false
 }

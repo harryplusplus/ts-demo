@@ -1,19 +1,18 @@
-import { AuthModule } from "@/auth/auth.module";
-import { JwtAccessAuthGuard } from "@/auth/jwt-access-auth.guard";
-import { getAppConfig } from "@/db/config";
-import { PaddleModule } from "@/paddle/paddle.module";
-import { RefreshTokenModule } from "@/refresh-token/refresh-token.module";
-import { UserModule } from "@/user/user.module";
 import { MikroOrmModule } from "@mikro-orm/nestjs";
 import { Module } from "@nestjs/common";
 import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
 import { GracefulShutdownModule } from "nestjs-graceful-shutdown";
 import { ZodSerializerInterceptor, ZodValidationPipe } from "nestjs-zod";
+import { AuthModule } from "../auth/auth.module.js";
+import { JwtAccessAuthGuard } from "../auth/jwt-access-auth.guard.js";
+import { PaddleModule } from "../paddle/paddle.module.js";
+import { RefreshTokenModule } from "../refresh-token/refresh-token.module.js";
+import { UserModule } from "../user/user.module.js";
 
 @Module({
   imports: [
     GracefulShutdownModule.forRoot(),
-    MikroOrmModule.forRoot(getAppConfig()),
+    MikroOrmModule.forRoot(),
     UserModule,
     RefreshTokenModule,
     AuthModule,

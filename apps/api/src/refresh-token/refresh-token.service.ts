@@ -1,8 +1,8 @@
-import { User } from "@/user/user.entity";
 import { InjectRepository } from "@mikro-orm/nestjs";
 import { EntityRepository, ref, Transactional } from "@mikro-orm/postgresql";
 import { Injectable } from "@nestjs/common";
-import { RefreshToken } from "./refresh-token.entity";
+import { User } from "../user/user.entity.js";
+import { RefreshToken } from "./refresh-token.entity.js";
 
 @Injectable()
 export class RefreshTokenService {

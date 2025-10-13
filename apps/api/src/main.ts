@@ -1,9 +1,9 @@
-import { AppModule } from "@/app/app.module";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import helmet from "helmet";
 import { setupGracefulShutdown } from "nestjs-graceful-shutdown";
 import { cleanupOpenApiDoc } from "nestjs-zod";
+import { AppModule } from "./app/app.module.js";
 
 bootstrap().catch((e) => {
   console.error(e);
@@ -20,7 +20,8 @@ async function bootstrap() {
   app.set("trust proxy", "loopback");
   app.use(helmet());
 
-  if (process.env.NODE_ENV !== "production") {
+  const { NODE_ENV } = process.env;
+  if (NODE_ENV !== "production") {
     await setupSwagger(app);
   }
 

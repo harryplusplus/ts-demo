@@ -1,9 +1,9 @@
-import { User } from "@/user/user.entity";
 import {
   createParamDecorator,
   ExecutionContext,
   SetMetadata,
 } from "@nestjs/common";
+import { User } from "../user/user.entity.js";
 
 export function getJwtSecret() {
   const { JWT_SECRET } = process.env;

@@ -1,9 +1,9 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20250929175043 extends Migration {
+export class Migration20251013142552 extends Migration {
 
   override async up(): Promise<void> {
-    this.addSql(`
+    this.addSql(/* sql */ `
 create table "users" (
   "id" bigint generated always as identity primary key not null,
   "uuid" uuid not null,
@@ -14,15 +14,16 @@ create table "users" (
   "deleted_at" timestamptz null
 );
 `);
-    this.addSql(`
+    this.addSql(/* sql */ `
 alter table "users"
 add constraint "users_uuid_unique" unique ("uuid");
 `);
-    this.addSql(`
+    this.addSql(/* sql */ `
 alter table "users"
 add constraint "users_email_unique" unique ("email");
 `);
-    this.addSql(`
+
+    this.addSql(/* sql */ `
 create table "refresh_tokens" (
   "id" bigint generated always as identity primary key not null,
   "token" text not null,
@@ -33,66 +34,31 @@ create table "refresh_tokens" (
   "user_id" bigint not null
 );
 `);
-    this.addSql(`
+    this.addSql(/* sql */ `
 alter table "refresh_tokens"
 add constraint "refresh_tokens_token_unique" unique ("token");
 `);
-    this.addSql(`
+    this.addSql(/* sql */ `
 create index "refresh_tokens_expires_at_deleted_at_user_id_index" on "refresh_tokens" ("expires_at", "deleted_at", "user_id");
 `);
-    this.addSql(`
+
+    this.addSql(/* sql */ `
 alter table "refresh_tokens"
 add constraint "refresh_tokens_user_id_foreign" foreign key ("user_id") references "users" ("id") on update cascade;
-`);
-    this.addSql(`
-create or replace function "fn_update_timestamp_users_updated_at" () returns trigger as \$\$
-begin
-  new."updated_at" := current_timestamp;
-  return new;
-end;
-\$\$ language plpgsql;
-`);
-    this.addSql(`
-create trigger "tr_update_timestamp_users_updated_at" before
-update on "users" for each row
-execute function "fn_update_timestamp_users_updated_at" ();
-`);
-    this.addSql(`
-create or replace function "fn_update_timestamp_refresh_tokens_updated_at" () returns trigger as \$\$
-begin
-  new."updated_at" := current_timestamp;
-  return new;
-end;
-\$\$ language plpgsql;
-`);
-    this.addSql(`
-create trigger "tr_update_timestamp_refresh_tokens_updated_at" before
-update on "refresh_tokens" for each row
-execute function "fn_update_timestamp_refresh_tokens_updated_at" ();
 `);
   }
 
   override async down(): Promise<void> {
-    this.addSql(`
-drop trigger if exists "tr_update_timestamp_refresh_tokens_updated_at" ON "refresh_tokens";
-`);
-    this.addSql(`
-drop function if exists "fn_update_timestamp_refresh_tokens_updated_at" ();
-`);
-    this.addSql(`
-drop trigger if exists "tr_update_timestamp_users_updated_at" ON "users";
-`);
-    this.addSql(`
-drop function if exists "fn_update_timestamp_users_updated_at" ();
-`);
-    this.addSql(`
+    this.addSql(/* sql */ `
 alter table "refresh_tokens"
 drop constraint "refresh_tokens_user_id_foreign";
 `);
-    this.addSql(`
+
+    this.addSql(/* sql */ `
 drop table if exists "users" cascade;
 `);
-    this.addSql(`
+
+    this.addSql(/* sql */ `
 drop table if exists "refresh_tokens" cascade;
 `);
   }

@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { PaddleService } from "./paddle.service";
+import { PaddleService } from "./paddle.service.js";
 
 @Module({
   providers: [PaddleService],

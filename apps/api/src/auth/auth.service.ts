@@ -1,6 +1,3 @@
-import { RefreshTokenService } from "@/refresh-token/refresh-token.service";
-import { User } from "@/user/user.entity";
-import { UserService } from "@/user/user.service";
 import { Transactional } from "@mikro-orm/postgresql";
 import {
   ConflictException,
@@ -10,7 +7,10 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { addDays } from "date-fns";
-import { AuthJwtService } from "./auth-jwt.service";
+import { RefreshTokenService } from "../refresh-token/refresh-token.service.js";
+import { User } from "../user/user.entity.js";
+import { UserService } from "../user/user.service.js";
+import { AuthJwtService } from "./auth-jwt.service.js";
 import {
   EmailExistsErrorDto,
   EmailSigninDto,
@@ -20,8 +20,8 @@ import {
   JwtPayloadDto,
   RefreshDto,
   RefreshTokenNotFoundErrorDto,
-} from "./auth.dto";
-import { PasswordHashService } from "./password-hash.service";
+} from "./auth.dto.js";
+import { PasswordHashService } from "./password-hash.service.js";
 
 @Injectable()
 export class AuthService {

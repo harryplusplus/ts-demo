@@ -1,6 +1,6 @@
-import { ResultError } from "@/error.dto";
-import { createZodDto } from "nestjs-zod";
+import { createZodDto } from "nestjs-zod/dto";
 import z from "zod";
+import { ResultError } from "../error.dto.js";
 
 export class EmailSigninDto extends createZodDto(
   z.object({

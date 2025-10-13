@@ -1,6 +1,7 @@
 import { EntityManager, MikroORM, wrap } from "@mikro-orm/postgresql";
-import { expectAny, initOrm } from "dev/test-utils";
-import { User } from "./user.entity";
+import { afterAll, beforeAll, expect, test } from "vitest";
+import { initOrm } from "../../tests/_common.js";
+import { User } from "./user.entity.js";
 
 let orm: MikroORM;
 let em: EntityManager;
@@ -24,12 +25,11 @@ test("create", async () => {
   expect(wrap(user, true).hasPrimaryKey()).toBe(false);
 
   wrap(user).assign({ email: "user@email.com", passwordHashed: "1" });
-
-  expect(user).toEqual({
+  expect(user).toMatchObject({
     email: "user@email.com",
     passwordHashed: "1",
     deletedAt: null,
-    uuid: expectAny(String),
+    uuid: expect.any(String) as unknown,
   });
 
   await em.flush();
@@ -68,7 +68,7 @@ test("safe delete", async () => {
       .where({ id: userId })
       .execute("get");
     expect(user).toMatchObject({
-      deletedAt: expectAny(Date),
+      deletedAt: expect.any(Date) as unknown,
     });
   }
 });

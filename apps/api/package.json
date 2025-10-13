@@ -1,17 +1,15 @@
 {
   "name": "@ts-demo/api",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
-    "build": "nest build",
+    "build": "dotenvx run -- nest build",
     "check-types": "tsc --noEmit",
-    "debug": "nodemon -w src -e ts -x dotenvx run -- ts-node src/main.ts",
     "dev": "dotenvx run -- nest start -w --type-check",
-    "gen-types:env": "node scripts/gen-types-env.mts",
-    "migration:create": "dotenvx run -- mikro-orm migration:create --config dev/migration-db-config.ts",
-    "migration:up": "dotenvx run -- mikro-orm migration:up --config dev/migration-db-config.ts",
-    "migration:down": "dotenvx run -- mikro-orm migration:down --config dev/migration-db-config.ts",
+    "migration:create": "dotenvx run -- tsx dev/migration-create.ts",
+    "migration:down": "dotenvx run -- mikro-orm migration:down",
+    "migration:up": "dotenvx run -- mikro-orm migration:up",
     "start": "dotenvx run -- node dist/main.js",
-    "test": "dotenvx run -f .env.test -- jest"
+    "test": "dotenvx run -f .env.test -- vitest"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "1.51.0",
@@ -45,16 +43,17 @@
   "devDependencies": {
     "@mikro-orm/cli": "6.5.6",
     "@mikro-orm/migrations": "6.5.6",
+    "@nestjs/cli": "11.0.10",
     "@swc/cli": "0.7.8",
+    "@swc/core": "1.13.5",
     "@ts-demo/paddle-task": "workspace:*",
     "@types/bcrypt": "6.0.0",
     "@types/express": "5.0.3",
     "@types/passport-jwt": "4.0.1",
     "@types/passport-local": "1.0.38",
-    "jest": "30.2.0",
-    "mikro-orm-pg-migration-generator": "0.1.6",
     "mikro-orm-pglite": "0.1.0",
     "sql-formatter": "15.6.9",
-    "type-fest": "5.0.1"
+    "tsx": "4.20.6",
+    "vitest": "3.2.4"
   }
 }
